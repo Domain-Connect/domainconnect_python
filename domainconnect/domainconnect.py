@@ -1,4 +1,3 @@
-from pip._vendor.distlib.util import proceed
 from six.moves import urllib
 
 from dns.exception import Timeout
