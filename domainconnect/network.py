@@ -67,8 +67,11 @@ def post_json(url, content, basic_auth=None, bearer=None):
         raise Exception('Failed to POST json to {}'.format(url))
     return response.read().decode('utf-8')
 
+def get_json(context: NetworkContext, url: str):
+    return json.loads(get_http(context, url))
 
-def get_json(context: NetworkContext, url):
+
+def get_http(context: NetworkContext, url: str):
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
         raise BadRequest('Given issuer is not a valid URL')
@@ -98,7 +101,7 @@ def get_json(context: NetworkContext, url):
         if response.status != 200:
             print('Failed to query {}: {}'.format(url, response.status))
             raise Exception('Failed to read from {}'.format(url))
-        ret = json.loads(response.read().decode('utf-8'))
+        ret = response.read().decode('utf-8')
     finally:
         if (connection is not None):
             connection.close()

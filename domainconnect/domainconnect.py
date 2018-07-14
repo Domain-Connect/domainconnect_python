@@ -5,7 +5,7 @@ from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 
 from publicsuffix import PublicSuffixList
 
-from .network import get_json, NetworkContext
+from .network import get_json, get_http, NetworkContext
 
 resolver = Resolver()
 #if 'DNS_NAMESERVERS' in app.config:
@@ -128,7 +128,7 @@ class DomainConnect:
             host = domain.replace('.' + domain_root, '')
         domain_connect_api, error = self.identify_domain_connect_api(domain_root)
         if error:
-            return None, None, None, error
+            return None, error
         else:
             ret, error2 = self._get_domain_config_for_root(domain_root, domain_connect_api)
             if (error2):
@@ -166,7 +166,7 @@ class DomainConnect:
             .format(config.urlAPI, provider_id, service_id)
 
         try:
-            response = get_json(self._networkContext, url)
+            response = get_http(self._networkContext, url)
             print('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
                                                                                     response))
             return response, None
