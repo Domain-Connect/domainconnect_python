@@ -154,11 +154,37 @@ class DomainConnect:
         print('No Domain Connect config found for {}.'.format(domain_root))
         return None, 'No Domain Connect config found for {}.'.format(domain_root)
 
-    def get_domain_connect_template_sync_url(self, domain, providerId, serviceId, redirect_uri=None, params={},  state=None):
+    def check_template_supported(self, config: DomainConnectConfig, provider_id: str, service_id: str) -> (dict, str):
+        """
+
+        :param config: domain connect config
+        :param provider_id: provider_id to check
+        :param service_id: service_id to check
+        :return: (template supported, error)
+        """
+        url = '{}/v2/domainTemplates/providers/{}/services/{}'\
+            .format(config.urlAPI, provider_id, service_id)
+
+        try:
+            response = get_json(self._networkContext, url)
+            print('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
+                                                                                    response))
+            return response, None
+        except Exception as e:
+            print("Exception when getting config:{}".format(e))
+        print('No template for serviceId: {} from {}'.format(service_id, provider_id))
+        return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
+
+    def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params={}, state=None):
 
         config, error = self.get_domain_config(domain)
 
         if (error is None):
+            template, error_templ = self.check_template_supported(config, provider_id, service_id)
+
+            if error_templ is not None:
+                return None, error_templ
+
             if config.urlSyncUX == None:
                 return None, "No sync URL in config"
 
@@ -170,15 +196,20 @@ class DomainConnect:
             if (state != None):
                 params["state"] = state
 
-            return sync_url_format.format(config.urlSyncUX, providerId, serviceId, config.domain_root, config.host, urllib.parse.urlencode(params)), None
+            return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host, urllib.parse.urlencode(params)), None
         else:
             return None, error
 
-    def get_domain_connect_template_async_url(self, domain, providerId, serviceId, redirect_uri, params={},  state=None):
+    def get_domain_connect_template_async_url(self, domain, provider_id, service_id, redirect_uri, params={}, state=None):
 
         config, error = self.get_domain_config(domain)
 
         if (error is None):
+            template, error_templ = self.check_template_supported(config, provider_id, service_id)
+
+            if error_templ is not None:
+                return None, error_templ
+
             if config.urlAsyncUX is None:
                 return None, "No asynch UX URL in config"
 
@@ -190,6 +221,6 @@ class DomainConnect:
             if (state != None):
                 params["state"] = state
 
-            return async_url_format.format(config.urlAsyncUX, providerId, serviceId, config.domain_root, config.host, urllib.parse.urlencode(params)), None
+            return async_url_format.format(config.urlAsyncUX, provider_id, service_id, config.domain_root, config.host, urllib.parse.urlencode(params)), None
         else:
             return None, error

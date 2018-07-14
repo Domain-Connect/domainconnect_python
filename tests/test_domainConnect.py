@@ -26,6 +26,14 @@ class TestDomainConnect(TestCase):
         assert(res[1] is None), "There is an error returned"
         assert(res[0] == 'https://domainconnect.1and1.com/sync/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain=connect.domains&host=justatest&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo&redirect_uri=http%3A%2F%2Fgoogle.com&state=%7Bname%3Dvalue%7D'), "URL is different than expected"
 
+        # simple test template does not exits
+        res = dc.get_domain_connect_template_sync_url("connect.domains", "exampleservice.domainconnect.org",
+                                                      "template_not_exists", params={"IP": "132.148.25.185",
+                                                                           "RANDOMTEXT": "shm:1531371203:Hejo"})
+        print(res)
+        assert (res[1] is not None), "There is no error returned and was expected"
+        assert (res[0] is None), "There was no url expected"
+
     def test_get_domain_config(self):
         dc = DomainConnect()
         res, error = dc.get_domain_config('testhost.connect.domains')
@@ -66,3 +74,12 @@ class TestDomainConnect(TestCase):
                          '&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'
                          '&redirect_uri=https%3A%2F%2Fexampleservice.domainconnect.org%2Fasync_oauth_response&state=%7Bname%3Dvalue%7D'), \
             "URL is different than expected: {}".format(res[0])
+
+        # simple test template does not exits
+        res = dc.get_domain_connect_template_async_url("connect.domains", "exampleservice.domainconnect.org",
+                                                      "template_not_exists", params={"IP": "132.148.25.185",
+                                                                           "RANDOMTEXT": "shm:1531371203:Hejo"},
+                                                       redirect_uri = "https://exampleservice.domainconnect.org/async_oauth_response")
+        print(res)
+        assert (res[1] is not None), "There is no error returned and was expected"
+        assert (res[0] is None), "There was no url expected"
