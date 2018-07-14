@@ -117,3 +117,14 @@ class TestDomainConnect(TestCase):
         print(res)
         assert (res[1] is not None), "There is no error returned and was expected"
         assert (res[0] is None), "There was no url expected"
+
+    def test_get_domain_connect_async_open_browser(self):
+        for i in configs:
+            with self.subTest(i = i):
+                self._test_get_domain_connect_template_async_url(i)
+
+    def _test_get_domain_connect_template_async_url(self, config: dict):
+        dc = DomainConnect()
+        res, error = dc.open_domain_connect_template_asynclink(config['TEST_DOMAIN'], 'exampleservice.domainconnect.org', 'template2', redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response')
+
+        assert (error is None), "Error occured: {}".format(error)

@@ -1,9 +1,11 @@
+from pip._vendor.distlib.util import proceed
 from six.moves import urllib
 
 from dns.exception import Timeout
 from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 
 from publicsuffix import PublicSuffixList
+import webbrowser
 
 from .network import get_json, get_http, NetworkContext
 
@@ -224,3 +226,14 @@ class DomainConnect:
             return async_url_format.format(config.urlAsyncUX, provider_id, service_id, config.domain_root, config.host, urllib.parse.urlencode(params)), None
         else:
             return None, error
+
+    def open_domain_connect_template_asynclink(self, domain, provider_id, service_id, redirect_uri, params={}, state=None):
+        url, error = self.get_domain_connect_template_async_url(domain, provider_id, service_id, redirect_uri, params, state)
+        if error:
+            return None, "Error when getting starting URL: {}".format(error)
+
+        try:
+            webbrowser.open_new_tab(url)
+            return None, None
+        except webbrowser.Error:
+            return  None, "Error opening browser window: {}".format(err)
