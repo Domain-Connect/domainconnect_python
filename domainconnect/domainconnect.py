@@ -40,6 +40,18 @@ class DomainConnectConfig:
         if 'width' in config and 'height' in config:
             self.uxSize = (config['width'], config['height'])
 
+class DomainConnectAsyncContext:
+    config: DomainConnectConfig = None
+    providerId: str = None
+    serviceId: str = None
+    asyncConsentUrl: str = None
+    code: str = None
+
+    def __init__(self, config: DomainConnectConfig, provider_id: str, service_id: str):
+        self.config = config
+        self.providerId = provider_id
+        self.serviceId = service_id
+
 class DomainConnect:
     _networkContext = NetworkContext()
 
@@ -201,7 +213,7 @@ class DomainConnect:
         else:
             return None, error
 
-    def get_domain_connect_template_async_url(self, domain, provider_id, service_id, redirect_uri, params={}, state=None):
+    def get_domain_connect_template_async_url(self, domain, provider_id, service_id, redirect_uri, params={}, state=None) -> (DomainConnectAsyncContext, str):
 
         config, error = self.get_domain_config(domain)
 
@@ -222,17 +234,19 @@ class DomainConnect:
             if (state != None):
                 params["state"] = state
 
-            return async_url_format.format(config.urlAsyncUX, provider_id, service_id, config.domain_root, config.host, urllib.parse.urlencode(params)), None
+            ret = DomainConnectAsyncContext(config, provider_id, service_id)
+            ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id, config.domain_root, config.host, urllib.parse.urlencode(params))
+            return ret, None
         else:
             return None, error
 
     def open_domain_connect_template_asynclink(self, domain, provider_id, service_id, redirect_uri, params={}, state=None):
-        url, error = self.get_domain_connect_template_async_url(domain, provider_id, service_id, redirect_uri, params, state)
+        asyncCtx, error = self.get_domain_connect_template_async_url(domain, provider_id, service_id, redirect_uri, params, state)
         if error:
             return None, "Error when getting starting URL: {}".format(error)
 
         try:
-            webbrowser.open_new_tab(url)
+            webbrowser.open_new_tab(asyncCtx.asyncConsentUrl)
             return None, None
-        except webbrowser.Error:
+        except webbrowser.Error as err:
             return  None, "Error opening browser window: {}".format(err)
