@@ -1,3 +1,5 @@
+import json
+
 from six.moves import urllib
 
 from dns.exception import Timeout
@@ -6,7 +8,7 @@ from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 from publicsuffix import PublicSuffixList
 import webbrowser
 
-from .network import get_json, get_http, NetworkContext
+from .network import get_json, get_http, http_request_json, NetworkContext
 
 resolver = Resolver()
 #if 'DNS_NAMESERVERS' in app.config:
@@ -44,13 +46,24 @@ class DomainConnectAsyncContext:
     config: DomainConnectConfig = None
     providerId: str = None
     serviceId: str = None
+    client_secret: str = None
     asyncConsentUrl: str = None
     code: str = None
+    params: dict = None
+    return_url: str = None
+    access_token: str = None
+    refresh_token: str = None
+    access_token: str = None
+    access_token_expires_in: int = None
+    refresh_token: str = None
 
-    def __init__(self, config: DomainConnectConfig, provider_id: str, service_id: str):
+    def __init__(self, config: DomainConnectConfig, provider_id: str, service_id: str, return_url: str, params: dict):
         self.config = config
         self.providerId = provider_id
         self.serviceId = service_id
+        self.return_url = return_url
+        self.params = params
+        self.client_secret = ''
 
 class DomainConnect:
     _networkContext = NetworkContext()
@@ -213,7 +226,7 @@ class DomainConnect:
         else:
             return None, error
 
-    def get_domain_connect_template_async_url(self, domain, provider_id, service_id, redirect_uri, params={}, state=None) -> (DomainConnectAsyncContext, str):
+    def get_domain_connect_template_async_url(self, domain, provider_id, service_id, redirect_uri, params={}, state=None, service_id_in_path=False) -> (DomainConnectAsyncContext, str):
 
         config, error = self.get_domain_config(domain)
 
@@ -226,27 +239,67 @@ class DomainConnect:
             if config.urlAsyncUX is None:
                 return None, "No asynch UX URL in config"
 
-            async_url_format = '{0}/v2/domainTemplates/providers/{1}' \
-                              '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
+            if service_id_in_path:
+                async_url_format = '{0}/v2/domainTemplates/providers/{1}/services/{2}' \
+                                  '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
+            else:
+                async_url_format = '{0}/v2/domainTemplates/providers/{1}' \
+                                  '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
 
             if (redirect_uri != None):
                 params["redirect_uri"] = redirect_uri
             if (state != None):
                 params["state"] = state
 
-            ret = DomainConnectAsyncContext(config, provider_id, service_id)
+            ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
             ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id, config.domain_root, config.host, urllib.parse.urlencode(params))
             return ret, None
         else:
             return None, error
 
-    def open_domain_connect_template_asynclink(self, domain, provider_id, service_id, redirect_uri, params={}, state=None):
-        asyncCtx, error = self.get_domain_connect_template_async_url(domain, provider_id, service_id, redirect_uri, params, state)
+    def open_domain_connect_template_asynclink(self, domain, provider_id, service_id, redirect_uri, params={}, state=None, service_id_in_path=False):
+        asyncCtx, error = self.get_domain_connect_template_async_url(domain, provider_id, service_id, redirect_uri, params, state, service_id_in_path)
         if error:
             return None, "Error when getting starting URL: {}".format(error)
 
         try:
             webbrowser.open_new_tab(asyncCtx.asyncConsentUrl)
-            return None, None
+            return asyncCtx, None
         except webbrowser.Error as err:
             return  None, "Error opening browser window: {}".format(err)
+
+    def get_async_token(self, context: DomainConnectAsyncContext)-> (DomainConnectAsyncContext, str):
+        params = {}
+        params['code'] = context.code
+        params['redirect_uri'] = context.return_url
+        params['grant_type'] = 'authorization_code'
+        # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by a malicious user
+        url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI, urllib.parse.urlencode(params))
+        try:
+            data = http_request_json(self._networkContext,
+                                method='POST',
+                                content_type='application/json',
+                                body=json.dumps({
+                                    'client_id': context.providerId,
+                                    'client_secret': context.client_secret,
+                                }),
+                                url=url_get_access_token
+                                )
+        except Exception as ex:
+            print('Cannot get async token: {}'.format(ex))
+            return None, 'Cannot get async token: {}'.format(ex)
+
+        if 'access_token' not in data \
+            or 'expires_in' not in data \
+            or 'token_type' not in data \
+            or data['token_type'].lower() != 'bearer':
+            print('Token not complete: {}'.format(data))
+            return None, 'Token not complete: {}'.format(data)
+
+        context.access_token = data['access_token']
+        context.access_token_expires_in = data['expires_in']
+
+        if 'refresh_token' in data:
+            context.refresh_token = data['refresh_token']
+
+        return context, None

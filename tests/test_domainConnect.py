@@ -1,5 +1,6 @@
 from unittest import TestCase
 from domainconnect import *
+from domainconnect import DomainConnect
 
 oneandone_config = \
     dict(
@@ -7,7 +8,9 @@ oneandone_config = \
         TEST_DOMAIN='connect.domains',
         SYNC_URL='https://domainconnect.1and1.com/sync',
         ASYNC_URL='https://domainconnect.1and1.com/async',
+        ASYNC_SERVICE_IN_PATH=False,
         API_URL='https://api.domainconnect.1and1.com',
+        CLIENT_SECRET='cd$;CVZRj#B8C@o3o8E4v-*k2H7S%)'
     )
 
 godaddy_config = \
@@ -16,7 +19,9 @@ godaddy_config = \
         TEST_DOMAIN='cuco240714it.today',
         SYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_URL='https://dcc.godaddy.com/manage',
+        ASYNC_SERVICE_IN_PATH=True,
         API_URL='https://domainconnect.api.godaddy.com',
+        CLIENT_SECRET='DomainConnectGeheimnisSecretString'
     )
 
 configs = [oneandone_config, godaddy_config]
@@ -158,11 +163,19 @@ class TestDomainConnect(TestCase):
 
     @staticmethod
     def _test_open_domain_connect_template_asynclink(config: dict) -> None:
-        dc = DomainConnect()
+        dc: DomainConnect = DomainConnect()
         res, error = dc.open_domain_connect_template_asynclink(config['TEST_DOMAIN'], 'exampleservice.domainconnect.org',
                                                                'template2',
-                                                               redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response')
+                                                               redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
+                                                               service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
         assert (error is None), "Error occured: {}".format(error)
 
         code = input("Please enter code: ")
+        res.code = code
+        res.client_secret = config['CLIENT_SECRET']
+
+        ctx, error = dc.get_async_token(res)
+        assert (error is None), "Error occured: {}".format(error)
+        assert (ctx.access_token is not None), 'Access token missing'
+        assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'

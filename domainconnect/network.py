@@ -5,6 +5,7 @@ import ssl
 
 from http import client
 
+
 class NetworkContext:
     proxyHost = None
     proxyPort = None
@@ -13,7 +14,21 @@ class NetworkContext:
         self.proxyPort = proxyPort
         self.proxyHost = proxyHost
 
-def http_request(method, url, body=None, basic_auth=None, bearer=None, content_type=None, cache_control=None):
+
+def http_request_json(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None, content_type=None, cache_control=None):
+    return json.loads(http_request(context=context,
+                                   method=method,
+                                   url=url,
+                                   body=body,
+                                   basic_auth=basic_auth,
+                                   bearer=bearer,
+                                   content_type=content_type,
+                                   cache_control=cache_control,
+                                   accepts='application/json'))
+
+
+def http_request(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None, content_type=None,
+                 accepts=None, cache_control=None):
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
         raise Exception('Given issuer is not a valid URL')
@@ -21,33 +36,45 @@ def http_request(method, url, body=None, basic_auth=None, bearer=None, content_t
     host = url_parts.group(2)
     path = url_parts.group(3)
     print('method = {} protocol = {}, host = {}, path = {}'.format(method, protocol, host, path))
-    if protocol == 'http':
-        if 'PROXY_HOST' in app.config and 'PROXY_PORT' in app.config:
-            print('using proxy {}:{}'.format(app.config['PROXY_HOST'], app.config['PROXY_PORT']))
-            connection = client.HTTPConnection(app.config['PROXY_HOST'], app.config['PROXY_PORT'])
-            connection.set_tunnel(host)
+    try:
+        if protocol == 'http':
+            if context.proxyHost != None and context.proxyPort != None:
+                print('using proxy {}:{}'.format(context.proxyHost, context.proxyPort))
+                connection = client.HTTPConnection(context.proxyHost, context.proxyPort)
+                connection.set_tunnel(host)
+            else:
+                connection = client.HTTPConnection(host)
         else:
-            connection = client.HTTPConnection(host)
-    else:
-        if 'PROXY_HOST' in app.config and 'PROXY_PORT' in app.config:
-            print('using proxy {}:{}'.format(app.config['PROXY_HOST'], app.config['PROXY_PORT']))
-            connection = client.HTTPSConnection(app.config['PROXY_HOST'], app.config['PROXY_PORT'])
-            connection.set_tunnel(host)
-        else:
-            connection = client.HTTPSConnection(host)
-    header = dict()
-    if basic_auth is not None:
-        user, password = basic_auth
-        head = ':'.join([user, password]).encode()
-        header['Authorization'] = ' '.join(['Basic', base64.b64encode(head).decode()])
-    if bearer is not None:
-        header['Authorization'] = ' '.join(['Bearer', bearer])
-    if content_type is not None:
-        header['Content-Type'] = content_type
-    if cache_control is not None:
-        header['Cache-Control'] = cache_control
-    connection.request(method, path, body, header)
-    return connection.getresponse()
+            sslContext = ssl._create_unverified_context()
+            if context.proxyHost != None and context.proxyPort != None:
+                print('using proxy {}:{}'.format(context.proxyHost, context.proxyPort))
+                connection = client.HTTPSConnection(context.proxyHost, context.proxyPort, context=sslContext)
+                connection.set_tunnel(host)
+            else:
+                connection = client.HTTPSConnection(host, context=sslContext)
+        header = dict()
+        if basic_auth is not None:
+            user, password = basic_auth
+            head = ':'.join([user, password]).encode()
+            header['Authorization'] = ' '.join(['Basic', base64.b64encode(head).decode()])
+        if bearer is not None:
+            header['Authorization'] = ' '.join(['Bearer', bearer])
+        if content_type is not None:
+            header['Content-Type'] = content_type
+        if accepts is not None:
+            header['Accept'] = accepts
+        if cache_control is not None:
+            header['Cache-Control'] = cache_control
+        connection.request(method, path, body, header)
+        response = connection.getresponse()
+        if response.status != 200:
+            print('Failed to query {}: {}'.format(url, response.status))
+            raise Exception('Failed to read from {}. HTTP code: {}'.format(url, response.status))
+        ret = response.read().decode('utf-8')
+    finally:
+        if connection is not None:
+            connection.close()
+    return ret
 
 
 def post_data(url, data, basic_auth=None, bearer=None):
@@ -67,6 +94,7 @@ def post_json(url, content, basic_auth=None, bearer=None):
         raise Exception('Failed to POST json to {}'.format(url))
     return response.read().decode('utf-8')
 
+
 def get_json(context: NetworkContext, url: str):
     return json.loads(get_http(context, url))
 
@@ -74,7 +102,7 @@ def get_json(context: NetworkContext, url: str):
 def get_http(context: NetworkContext, url: str):
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
-        raise BadRequest('Given issuer is not a valid URL')
+        raise Exception('Given issuer is not a valid URL')
     protocol = url_parts.group(1).lower()
     host = url_parts.group(2)
     path = url_parts.group(3)
@@ -103,7 +131,7 @@ def get_http(context: NetworkContext, url: str):
             raise Exception('Failed to read from {}'.format(url))
         ret = response.read().decode('utf-8')
     finally:
-        if (connection is not None):
+        if connection is not None:
             connection.close()
     return ret
 

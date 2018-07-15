@@ -1,2 +1,2 @@
 from .domainconnect import *
-from .network import *
+from .network import NetworkContext
