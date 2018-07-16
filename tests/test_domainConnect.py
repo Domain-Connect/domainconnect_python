@@ -1,5 +1,4 @@
 from unittest import TestCase
-from domainconnect import *
 from domainconnect import DomainConnect
 
 oneandone_config = \
@@ -28,6 +27,7 @@ configs = [oneandone_config, godaddy_config]
 
 
 class TestDomainConnect(TestCase):
+
     def test_get_domain_connect_template_sync_url(self):
         for i in configs:
             with self.subTest(i=i):
@@ -163,19 +163,26 @@ class TestDomainConnect(TestCase):
 
     @staticmethod
     def _test_open_domain_connect_template_asynclink(config: dict) -> None:
+        params = {"IP": "132.148.25.185",
+                  "RANDOMTEXT": "shm:1531371203:Hejo async"}
+
         dc: DomainConnect = DomainConnect()
-        res, error = dc.open_domain_connect_template_asynclink(config['TEST_DOMAIN'], 'exampleservice.domainconnect.org',
-                                                               'template2',
+        context, error = dc.open_domain_connect_template_asynclink('asyncpage.' + config['TEST_DOMAIN'], 'exampleservice.domainconnect.org',
+                                                               'template2', params=params,
                                                                redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
                                                                service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
         assert (error is None), "Error occured: {}".format(error)
 
         code = input("Please enter code: ")
-        res.code = code
-        res.client_secret = config['CLIENT_SECRET']
+        context.code = code
+        context.client_secret = config['CLIENT_SECRET']
 
-        ctx, error = dc.get_async_token(res)
+        ctx, error = dc.get_async_token(context)
         assert (error is None), "Error occured: {}".format(error)
         assert (ctx.access_token is not None), 'Access token missing'
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
+
+        res, error = dc.apply_domain_connect_template_async(context, params=params)
+        assert error is None, 'Error on apply: {}'.format(error)
+        assert res == 'Success', 'Wrong result: {}'.format(res)

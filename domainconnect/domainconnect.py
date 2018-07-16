@@ -8,7 +8,7 @@ from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 from publicsuffix import PublicSuffixList
 import webbrowser
 
-from .network import get_json, get_http, http_request_json, NetworkContext
+from .network import get_json, get_http, http_request, http_request_json, NetworkContext
 
 resolver = Resolver()
 #if 'DNS_NAMESERVERS' in app.config:
@@ -202,6 +202,9 @@ class DomainConnect:
         return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
 
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params={}, state=None):
+        # TODO: support for groupIds
+        # TODO: support for signatures
+        # TODO: support for provider_name (for shared templates)
 
         config, error = self.get_domain_config(domain)
 
@@ -303,3 +306,27 @@ class DomainConnect:
             context.refresh_token = data['refresh_token']
 
         return context, None
+
+    def apply_domain_connect_template_async(self, context: DomainConnectAsyncContext, host: str = None, service_id = None, params={}, force=False):
+        # TODO: support for groupIds
+        if host is None:
+            host = context.config.host
+        if service_id is None:
+            service_id = context.serviceId
+
+        async_url_format = '{}/v2/domainTemplates/providers/{}/services/{}/' \
+                          'apply?domain={}&host={}&{}'
+
+        if force == True:
+            params['force'] = 'true'
+
+        url = async_url_format.format(context.config.urlAPI, context.providerId, service_id, context.config.domain_root, host, urllib.parse.urlencode(params))
+
+        try:
+            ret = http_request_json(self._networkContext, 'POST', url, bearer=context.access_token)
+            return "Success", None
+        except Exception as e:
+            return None, 'Error on apply: {}'.format(e)
+
+
+    # TODO: implement revert
