@@ -1,5 +1,7 @@
 from unittest import TestCase
 from domainconnect import DomainConnect
+# to assure input works like raw_input in python 2
+from builtins import input
 
 oneandone_config = \
     dict(
