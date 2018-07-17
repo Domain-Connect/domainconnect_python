@@ -41,7 +41,8 @@ class TestDomainConnect(TestCase):
         # simple test sync
         res, error = dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
                                                              "template1",
-                                                             params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"})
+                                                             params={"IP": "132.148.25.185",
+                                                                     "RANDOMTEXT": "shm:1531371203:Hejo"})
         print(res)
         assert (error is None), "There is an error returned: {}".format(error)
         assert (res == config['SYNC_URL']
@@ -106,7 +107,7 @@ class TestDomainConnect(TestCase):
 
     def test_get_domain_connect_template_async_url(self):
         for i in configs:
-            with self.subTest(i= i):
+            with self.subTest(i=i):
                 TestDomainConnect._test_get_domain_connect_template_async_url(i)
 
     @staticmethod
@@ -134,31 +135,36 @@ class TestDomainConnect(TestCase):
             "URL is different than expected: {}".format(res)
 
         # simple test sync with host
-        res, error = dc.get_domain_connect_template_async_url("justatest." + config['TEST_DOMAIN'],
-                                                              "exampleservice.domainconnect.org", "template2",
-                                                              params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
-                                                       redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response",
-                                                       state="{name=value}")
+        res, error = dc.get_domain_connect_template_async_url(
+            "justatest." + config['TEST_DOMAIN'],
+            "exampleservice.domainconnect.org", "template2",
+            params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
+            redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response",
+            state="{name=value}")
         print(res)
         assert(error is None), "There is an error returned"
-        assert(res.asyncConsentUrl == config['ASYNC_URL'] + '/v2/domainTemplates/providers/exampleservice.domainconnect.org'
-                         '?client_id=exampleservice.domainconnect.org&scope=template2&domain=' + config['TEST_DOMAIN'] + '&host=justatest'
-                         '&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'
-                         '&redirect_uri=https%3A%2F%2Fexampleservice.domainconnect.org%2Fasync_oauth_response&state=%7Bname%3Dvalue%7D'), \
+        assert(res.asyncConsentUrl == config['ASYNC_URL']
+               + '/v2/domainTemplates/providers/exampleservice.domainconnect.org'
+                 '?client_id=exampleservice.domainconnect.org&scope=template2&domain='
+               + config['TEST_DOMAIN']
+               + '&host=justatest&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'
+                 '&redirect_uri=https%3A%2F%2Fexampleservice.domainconnect.org%2F'
+                 'async_oauth_response&state=%7Bname%3Dvalue%7D'), \
             "URL is different than expected: {}".format(res[0])
 
         # simple test template does not exits
-        res, error = dc.get_domain_connect_template_async_url("" + config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
-                                                      "template_not_exists", params={"IP": "132.148.25.185",
-                                                                           "RANDOMTEXT": "shm:1531371203:Hejo"},
-                                                       redirect_uri = "https://exampleservice.domainconnect.org/async_oauth_response")
+        res, error = dc.get_domain_connect_template_async_url(
+            config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
+            "template_not_exists",
+            params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
+            redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response")
         print(res)
         assert (error is not None), "There is no error returned and was expected"
         assert (res is None), "There was no url expected: {}".format(res.asyncConsentUrl)
 
     def test_get_domain_connect_async_open_browser(self):
         for i in configs:
-            with self.subTest(i = i):
+            with self.subTest(i=i):
                 TestDomainConnect._test_open_domain_connect_template_asynclink(i)
 
     @staticmethod
@@ -167,10 +173,12 @@ class TestDomainConnect(TestCase):
                   "RANDOMTEXT": "shm:1531371203:Hejo async"}
 
         dc: DomainConnect = DomainConnect()
-        context, error = dc.open_domain_connect_template_asynclink('asyncpage.' + config['TEST_DOMAIN'], 'exampleservice.domainconnect.org',
-                                                               'template2', params=params,
-                                                               redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
-                                                               service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
+        context, error = dc.open_domain_connect_template_asynclink(
+            'asyncpage.' + config['TEST_DOMAIN'],
+            'exampleservice.domainconnect.org',
+            'template2', params=params,
+            redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
+            service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
         assert (error is None), "Error occured: {}".format(error)
 

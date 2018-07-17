@@ -10,9 +10,9 @@ class NetworkContext:
     proxyHost = None
     proxyPort = None
 
-    def __init__(self, proxyHost: str = None, proxyPort: str = None) -> object:
-        self.proxyPort = proxyPort
-        self.proxyHost = proxyHost
+    def __init__(self, proxy_host: str = None, proxy_port: str = None) -> None:
+        self.proxyPort = proxy_port
+        self.proxyHost = proxy_host
 
 
 def http_request_json(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None, content_type=None, cache_control=None):
@@ -29,6 +29,7 @@ def http_request_json(context: NetworkContext, method, url, body=None, basic_aut
 
 def http_request(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None, content_type=None,
                  accepts=None, cache_control=None):
+    connection = None
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
         raise Exception('Given issuer is not a valid URL')
@@ -38,20 +39,21 @@ def http_request(context: NetworkContext, method, url, body=None, basic_auth=Non
     print('method = {} protocol = {}, host = {}, path = {}'.format(method, protocol, host, path))
     try:
         if protocol == 'http':
-            if context.proxyHost != None and context.proxyPort != None:
+            if context.proxyHost is not None and context.proxyPort is not None:
                 print('using proxy {}:{}'.format(context.proxyHost, context.proxyPort))
                 connection = client.HTTPConnection(context.proxyHost, context.proxyPort)
                 connection.set_tunnel(host)
             else:
                 connection = client.HTTPConnection(host)
         else:
-            sslContext = ssl._create_unverified_context()
-            if context.proxyHost != None and context.proxyPort != None:
+            # noinspection PyProtectedMember
+            ssl_context = ssl._create_unverified_context()
+            if context.proxyHost is not None and context.proxyPort is not None:
                 print('using proxy {}:{}'.format(context.proxyHost, context.proxyPort))
-                connection = client.HTTPSConnection(context.proxyHost, context.proxyPort, context=sslContext)
+                connection = client.HTTPSConnection(context.proxyHost, context.proxyPort, context=ssl_context)
                 connection.set_tunnel(host)
             else:
-                connection = client.HTTPSConnection(host, context=sslContext)
+                connection = client.HTTPSConnection(host, context=ssl_context)
         header = dict()
         if basic_auth is not None:
             user, password = basic_auth
@@ -77,8 +79,8 @@ def http_request(context: NetworkContext, method, url, body=None, basic_auth=Non
     return ret
 
 
-def post_data(url, data, basic_auth=None, bearer=None):
-    response = http_request('POST', url, body=data, basic_auth=basic_auth,
+def post_data(context: NetworkContext, url, data, basic_auth=None, bearer=None):
+    response = http_request(context=context, method='POST', url=url, body=data, basic_auth=basic_auth,
                             bearer=bearer, content_type='application/x-www-form-urlencoded')
     if response.status != 200:
         print(response.getheaders())
@@ -86,8 +88,8 @@ def post_data(url, data, basic_auth=None, bearer=None):
     return response.read().decode('utf-8')
 
 
-def post_json(url, content, basic_auth=None, bearer=None):
-    response = http_request('POST', url, body=json.dumps(content), basic_auth=basic_auth,
+def post_json(context: NetworkContext, url, content, basic_auth=None, bearer=None):
+    response = http_request(context=context, method='POST', url=url, body=json.dumps(content), basic_auth=basic_auth,
                             bearer=bearer, content_type='application/json')
     if response.status != 200:
         print(response.getheaders())
@@ -100,6 +102,7 @@ def get_json(context: NetworkContext, url: str):
 
 
 def get_http(context: NetworkContext, url: str):
+    connection = None
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
         raise Exception('Given issuer is not a valid URL')
@@ -107,23 +110,23 @@ def get_http(context: NetworkContext, url: str):
     host = url_parts.group(2)
     path = url_parts.group(3)
     print('protocol = {}, host = {}, path = {}'.format(protocol, host, path))
-    ret = ''
     try:
         if protocol == 'http':
-            if context.proxyHost != None and context.proxyPort != None:
+            if context.proxyHost is not None and context.proxyPort is not None:
                 print('using proxy {}:{}'.format(context.proxyHost, context.proxyPort))
                 connection = client.HTTPConnection(context.proxyHost, context.proxyPort)
                 connection.set_tunnel(host)
             else:
                 connection = client.HTTPConnection(host)
         else:
-            sslContext = ssl._create_unverified_context()
-            if context.proxyHost != None and context.proxyPort != None:
+            # noinspection PyProtectedMember
+            ssl_context = ssl._create_unverified_context()
+            if context.proxyHost is not None and context.proxyPort is not None:
                 print('using proxy {}:{}'.format(context.proxyHost, context.proxyPort))
-                connection = client.HTTPSConnection(context.proxyHost, context.proxyPort, context=sslContext)
+                connection = client.HTTPSConnection(context.proxyHost, context.proxyPort, context=ssl_context)
                 connection.set_tunnel(host)
             else:
-                connection = client.HTTPSConnection(host, context=sslContext)
+                connection = client.HTTPSConnection(host, context=ssl_context)
         connection.request('GET', path)
         response = connection.getresponse()
         if response.status != 200:
@@ -136,8 +139,8 @@ def get_http(context: NetworkContext, url: str):
     return ret
 
 
-def get_json_auth(url, basic_auth=None, bearer=None):
-    response = http_request('GET', url, basic_auth=basic_auth, bearer=bearer)
+def get_json_auth(context: NetworkContext, url, basic_auth=None, bearer=None):
+    response = http_request(context=context, method='GET', url=url, basic_auth=basic_auth, bearer=bearer)
     if response.status != 200:
         print(response.getheaders())
         raise Exception('Failed to GET from {}'.format(url))

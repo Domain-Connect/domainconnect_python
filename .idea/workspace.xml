@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3d8f7f38-c6ec-4b27-9040-852f9c168672" name="Default" comment="" />
+    <list default="true" id="3d8f7f38-c6ec-4b27-9040-852f9c168672" name="Default" comment="NEW FEATURE: Async apply">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domainconnect/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/domainconnect/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domainconnect/domainconnect.py" beforeDir="false" afterPath="$PROJECT_DIR$/domainconnect/domainconnect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domainconnect/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/domainconnect/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_domainConnect.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_domainConnect.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -9,22 +16,25 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="domainconnect" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="17">
-              <caret line="1" column="17" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
+              <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="network.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="network.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1122">
-              <caret line="71" selection-start-line="71" selection-end-line="71" />
+            <state relative-caret-position="216">
+              <caret line="112" selection-start-line="112" selection-end-line="112" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -35,13 +45,27 @@
       <file leaf-file-name="domainconnect.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="39" column="50" selection-start-line="39" selection-start-column="50" selection-end-line="39" selection-end-column="50" />
+            <state relative-caret-position="446">
+              <caret line="350" column="12" selection-start-line="350" selection-start-column="12" selection-end-line="350" selection-end-column="12" />
               <folding>
-                <element signature="e#0#28#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="18" column="6" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tests/__init__.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file leaf-file-name="case.py" pinned="false" current-in-tab="false">
@@ -53,11 +77,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_domainConnect.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test_domainConnect.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
-              <caret line="38" selection-start-line="38" selection-end-line="38" />
+            <state relative-caret-position="348">
+              <caret line="164" column="8" selection-start-line="164" selection-start-column="8" selection-end-line="164" selection-end-column="8" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -79,32 +103,59 @@
       <find>psl</find>
       <find>No Domain Connect templateSync API found for</find>
       <find>Domain Connect templateSync API</find>
+      <find>connect.domains&quot;</find>
+      <find>.connect.domains'</find>
+      <find>No template for serviceId</find>
+      <find>=cuco240714it.today&amp;</find>
+      <find>'https://domainconnect.1and1.com/sync</find>
+      <find>config.TEST_DOMAIN</find>
+      <find>config['DOMAIN_NAME']</find>
+      <find>TEST_DOMAIN_1AND1</find>
+      <find>Failed to read from</find>
+      <find>_test_get_domain_connect_template_async_url</find>
     </findStrings>
+    <replaceStrings>
+      <replace>&quot; + TEST_DOMAIN</replace>
+      <replace>.' + TEST_DOMAIN_1AND1</replace>
+      <replace>=' + TEST_DOMAIN_GODADDY + '&amp;</replace>
+      <replace>SYNC_URL_1AND1 + '</replace>
+      <replace>config['TEST_DOMAIN']</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="WARN_ABOUT_CRLF" value="false" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/domainconnect/connect.py" />
-        <option value="$PROJECT_DIR$/domainconnect/__init__.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/domainconnect/network.py" />
         <option value="$PROJECT_DIR$/domainconnect/test_domainConnect.py" />
-        <option value="$PROJECT_DIR$/domainconnect/domainconnect.py" />
         <option value="$PROJECT_DIR$/tests/test_domainConnect.py" />
+        <option value="$PROJECT_DIR$/domainconnect/__init__.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/domainconnect/domainconnect.py" />
+        <option value="$PROJECT_DIR$/domainconnect/network.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="10" />
-    <option name="y" value="20" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
     <option name="width" value="1346" />
     <option name="height" value="688" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -126,11 +177,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$/tests" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -145,24 +197,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Python tests.Unittests for test_domainConnect.TestDomainConnect">
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="domainconnect" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <configuration name="Unittests for test_domainConnect.TestDomainConnect" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="domainconnect" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -189,6 +223,19 @@
       <option name="_new_target" value="&quot;test_domainConnect.TestDomainConnect.test_get_domain_config&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     </configuration>
+    <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="domainconnect" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+    </configuration>
     <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_template_async_url" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="domainconnect" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -202,18 +249,33 @@
       <option name="_new_target" value="&quot;test_domainConnect.TestDomainConnect.test_get_domain_connect_template_async_url&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     </configuration>
+    <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_redirect" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="domainconnect" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_domainConnect.TestDomainConnect.test_redirect&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+    </configuration>
     <list>
-      <item itemvalue="Python.test" />
       <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect" />
       <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" />
       <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_template_async_url" />
+      <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" />
+      <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_redirect" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect" />
-        <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" />
+        <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" />
+        <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_redirect" />
         <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_template_async_url" />
-        <item itemvalue="Python.test" />
+        <item itemvalue="Python tests.Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" />
       </list>
     </recent_temporary>
   </component>
@@ -228,101 +290,406 @@
       <option name="presentableId" value="Default" />
       <updated>1531255681952</updated>
     </task>
+    <task id="LOCAL-00001" summary="NEW FEATURE: checking for template existence prior to sync/async action">
+      <created>1531591987000</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1531591987000</updated>
+    </task>
+    <task id="LOCAL-00002" summary="TESTS ADDED: GoDaddy sync test&#10;NEW FEATURE: checking template exisiting also works with GD now">
+      <created>1531596196947</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1531596196947</updated>
+    </task>
+    <task id="LOCAL-00003" summary="REFACTORING: tests generalize to execute with more DNS Providers">
+      <created>1531608640476</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1531608640476</updated>
+    </task>
+    <task id="LOCAL-00004" summary="NEW FEATURE: opening browser for Async flow">
+      <created>1531610123002</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1531610123002</updated>
+    </task>
+    <task id="LOCAL-00005" summary="BUGFIX: remove noe active references">
+      <created>1531610583487</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1531610583487</updated>
+    </task>
+    <task id="LOCAL-00006" summary="REFACTORING: Clean-up to temove some PEP warnings">
+      <created>1531686561805</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1531686561805</updated>
+    </task>
+    <task id="LOCAL-00007" summary="REFACTORING: added context data structure to enable async process continuation">
+      <created>1531687972948</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1531687972948</updated>
+    </task>
+    <task id="LOCAL-00008" summary="NEW FEATURE: getting access_token now implemented, both aind 1&amp;1 and GD">
+      <created>1531697361631</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1531697361631</updated>
+    </task>
+    <task id="LOCAL-00009" summary="NEW FEATURE: Async apply">
+      <created>1531755227149</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1531755227149</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect - 2018.07.14 at 08h 21m 13s.xml">
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 16h 47m 33s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 16h 49m 52s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 16h 50m 42s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 16h 51m 30s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 16h 56m 11s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 16h 58m 56s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_connect_async_open_browser - 2018.07.16 at 17h 30m 01s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_connect_async_open_browser" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect - 2018.07.16 at 17h 35m 58s.xml">
       <configuration name="Unittests for test_domainConnect.TestDomainConnect" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 23m 46s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect - 2018.07.17 at 11h 26m 00s.xml">
+      <configuration name="Unittests for test_domainConnect.TestDomainConnect" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 23m 49s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 27m 18s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 27m 35s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 28m 34s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 30m 52s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 31m 07s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect_test_get_domain_config - 2018.07.14 at 08h 32m 20s.xml">
-      <configuration name="Unittests for test_domainConnect.TestDomainConnect.test_get_domain_config" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect - 2018.07.14 at 08h 32m 28s.xml">
+    <history-entry file="Unittests_for_test_domainConnect_TestDomainConnect - 2018.07.17 at 11h 30m 37s.xml">
       <configuration name="Unittests for test_domainConnect.TestDomainConnect" configurationId="tests" />
     </history-entry>
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5014641" side_tool="true" weight="0.5251572" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49853587" visible="true" weight="0.5251572" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19399707" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.30016312" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5014641" side_tool="true" weight="0.52365416" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32626426" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.19575857" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49853587" weight="0.2813397" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32952693" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49918434" visible="true" weight="0.20469083" />
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="R Graphics" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32704404" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39779875" />
+      <window_info active="true" anchor="bottom" id="Inspection Results" visible="true" weight="0.3291866" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32535884" />
+      <window_info id="Structure" order="1" sideWeight="0.5008157" side_tool="true" weight="0.20045386" />
+      <window_info id="Favorites" order="2" sideWeight="0.5008157" side_tool="true" weight="0.20045386" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39617226" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
     </layout>
     <layout-to-restore>
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32626426" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947917" visible="true" weight="0.35486892" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.123958334" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49853587" weight="0.34094617" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49918434" visible="true" weight="0.20045386" />
+      <window_info id="Structure" order="1" sideWeight="0.5008157" side_tool="true" weight="0.20045386" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.30179444" />
       <window_info anchor="right" id="R Graphics" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32771537" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32626426" />
       <window_info anchor="right" id="R Packages" order="4" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3988764" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5005208" side_tool="true" weight="0.35486892" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.19575857" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3964111" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32952693" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5014641" side_tool="true" weight="0.52365416" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info id="Favorites" order="2" sideWeight="0.5008157" side_tool="true" weight="0.20045386" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="TESTS ADDED: GoDaddy sync test&#10;NEW FEATURE: checking template exisiting also works with GD now" />
+    <MESSAGE value="REFACTORING: tests generalize to execute with more DNS Providers" />
+    <MESSAGE value="NEW FEATURE: opening browser for Async flow" />
+    <MESSAGE value="BUGFIX: remove noe active references" />
+    <MESSAGE value="REFACTORING: Clean-up to temove some PEP warnings" />
+    <MESSAGE value="REFACTORING: added context data structure to enable async process continuation" />
+    <MESSAGE value="NEW FEATURE: checking for template existence prior to sync/async action" />
+    <MESSAGE value="NEW FEATURE: getting access_token now implemented, both aind 1&amp;1 and GD" />
+    <MESSAGE value="NEW FEATURE: Async apply" />
+    <option name="LAST_COMMIT_MESSAGE" value="NEW FEATURE: Async apply" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/domainconnect/domainconnect.py</url>
-          <line>136</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="15" />
+      <option name="time" value="33" />
     </breakpoint-manager>
   </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>response.read().decode('utf-8')</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="35" selection-start-line="1" selection-start-column="35" selection-end-line="1" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="8" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3145">
+          <caret line="185" column="51" selection-start-line="185" selection-start-column="51" selection-end-line="185" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="8" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="35" selection-start-line="1" selection-start-column="35" selection-end-line="1" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1241">
+          <caret line="73" column="12" lean-forward="true" selection-start-line="73" selection-start-column="12" selection-end-line="73" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2703">
+          <caret line="161" column="54" lean-forward="true" selection-start-line="161" selection-start-column="54" selection-end-line="161" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="17" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="6" selection-end-line="23" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="17" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1241">
+          <caret line="73" column="48" lean-forward="true" selection-start-line="73" selection-start-column="48" selection-end-line="73" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="40" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="59" column="54" selection-start-line="59" selection-start-column="54" selection-end-line="59" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="17" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="71" selection-start-line="71" selection-end-line="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3451">
+          <caret line="210" column="40" lean-forward="true" selection-start-line="210" selection-start-column="40" selection-end-line="211" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1241">
+          <caret line="74" column="25" selection-start-line="74" selection-start-column="25" selection-end-line="74" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -334,9 +701,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1207">
           <caret line="71" selection-start-line="71" selection-end-line="71" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -344,9 +708,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2448">
           <caret line="151" column="45" selection-start-line="151" selection-start-column="8" selection-end-line="151" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -379,9 +740,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1071">
           <caret line="68" column="6" lean-forward="true" selection-start-line="68" selection-start-column="6" selection-end-line="68" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -389,53 +747,21 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1241">
           <caret line="80" column="46" selection-start-line="80" selection-start-column="46" selection-end-line="80" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="32" column="50" selection-start-line="32" selection-start-column="50" selection-end-line="32" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py" />
-    <entry file="file://$PROJECT_DIR$/tests/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1122">
-          <caret line="71" selection-start-line="71" selection-end-line="71" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/domainconnect/test_domainConnect.py" />
-    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="17" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/unittest/case.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="765">
@@ -443,22 +769,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+    <entry file="file://$PROJECT_DIR$/tests/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Program/Python/Python36/Lib/contextlib.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="39" column="50" selection-start-line="39" selection-start-column="50" selection-end-line="39" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="114">
+          <caret line="85" selection-start-line="85" selection-end-line="85" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/test_domainConnect.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="38" selection-start-line="38" selection-end-line="38" />
+        <state relative-caret-position="348">
+          <caret line="164" column="8" selection-start-line="164" selection-start-column="8" selection-end-line="164" selection-end-column="8" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="6" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/domainconnect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="350" column="12" selection-start-line="350" selection-start-column="12" selection-end-line="350" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/domainconnect/network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="112" selection-start-line="112" selection-end-line="112" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
