@@ -268,7 +268,7 @@ class DomainConnect:
                 params["state"] = state
 
             return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host,
-                                          urllib.parse.urlencode(params)), None
+                                          urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))), None
         else:
             return None, error
 
@@ -315,7 +315,7 @@ class DomainConnect:
             ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
             ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id,
                                                           config.domain_root, config.host,
-                                                          urllib.parse.urlencode(params))
+                                                          urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
             return ret, None
         else:
             return None, error
@@ -348,7 +348,7 @@ class DomainConnect:
         # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by
         # a malicious user
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
-                                                                    urllib.parse.urlencode(params))
+                                                                    urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
         try:
             # this has to be checked to avoid secret leakage by spoofed "settings" end-point
             if credentials.api_url != context.config.urlAPI:
@@ -408,7 +408,7 @@ class DomainConnect:
             params['force'] = 'true'
 
         url = async_url_format.format(context.config.urlAPI, context.providerId, service_id, context.config.domain_root,
-                                      host, urllib.parse.urlencode(params))
+                                      host, urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
 
         try:
             http_request_json(self._networkContext, 'POST', url, bearer=context.access_token)
