@@ -52,12 +52,11 @@ class TestDomainConnect(TestCase):
                                                              "template1",
                                                              params={"IP": "132.148.25.185",
                                                                      "RANDOMTEXT": "shm:1531371203:Hejo"})
-        print(res)
-        assert (error is None), "There is an error returned: {}".format(error)
+        assert (error is None), "1. There is an error returned: {}".format(error)
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN'] + '&host=&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'), \
-            "URL is different than expected"
+            "1. URL is different than expected: {}".format(res)
 
         # simple test sync with host
         res, error = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
@@ -66,11 +65,11 @@ class TestDomainConnect(TestCase):
                                                              params={"IP": "132.148.25.185",
                                                                      "RANDOMTEXT": "shm:1531371203:Hejo"})
         print(res)
-        assert (error is None), "There is an error returned: {}".format(error)
+        assert (error is None), "2. There is an error returned: {}".format(error)
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN'] + '&host=justatest&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'), \
-            "URL is different than expected"
+            "2. URL is different than expected".format(res)
 
         # simple test sync with host and redirect uri and scope
         res, error = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
@@ -79,23 +78,21 @@ class TestDomainConnect(TestCase):
                                                              params={"IP": "132.148.25.185",
                                                                      "RANDOMTEXT": "shm:1531371203:Hejo"},
                                                              redirect_uri="http://google.com", state="{name=value}")
-        print(res)
-        assert (error is None), "There is an error returned: {}".format(error)
+        assert (error is None), "3. There is an error returned: {}".format(error)
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN']
                 + '&host=justatest&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'
                   '&redirect_uri=http%3A%2F%2Fgoogle.com&state=%7Bname%3Dvalue%7D'), \
-            "URL is different than expected"
+            "3. URL is different than expected".format(res)
 
         # simple test template does not exits
         res, error = dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
                                                              "template_not_exists",
                                                              params={"IP": "132.148.25.185",
                                                                      "RANDOMTEXT": "shm:1531371203:Hejo"})
-        print(res)
-        assert (error is not None), "There is no error returned and was expected"
-        assert (res is None), "There was no url expected and came: {}".format(res)
+        assert (error is not None), "4. There is no error returned and was expected"
+        assert (res is None), "4. There was no url expected and came: {}".format(res)
 
     def test_get_domain_config(self):
         for i in configs:
