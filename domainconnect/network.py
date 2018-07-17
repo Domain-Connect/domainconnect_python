@@ -3,7 +3,7 @@ import json
 import re
 import ssl
 
-from http import client
+from six.moves import http_client as client
 
 
 class NetworkContext:
