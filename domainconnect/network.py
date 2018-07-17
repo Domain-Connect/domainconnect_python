@@ -10,7 +10,7 @@ class NetworkContext:
     proxyHost = None
     proxyPort = None
 
-    def __init__(self, proxy_host = None, proxy_port = None):
+    def __init__(self, proxy_host=None, proxy_port=None):
         self.proxyPort = proxy_port
         self.proxyHost = proxy_host
 

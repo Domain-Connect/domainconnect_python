@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest2 import TestCase
 from domainconnect import DomainConnect, DomainConnectAsyncCredentials
 # to assure input works like raw_input in python 2
 from builtins import input

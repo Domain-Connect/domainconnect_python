@@ -69,7 +69,7 @@ class DomainConnectAsyncContext:
     """ :type: str """
     client_secret = None
     """ :type: str """
-    asyncConsentUrl  = None
+    asyncConsentUrl = None
     """ :type: str """
     code = None
     """ :type: str """
@@ -106,7 +106,7 @@ class DomainConnectAsyncContext:
 class DomainConnectAsyncCredentials:
     client_id = None
     """ :type: str """
-    client_secret= None
+    client_secret = None
     """ :type: str """
     api_url = None
     """ :type: str """
