@@ -31,7 +31,14 @@ class DomainConnectConfig:
     uxSize = None
     urlControlPanel = None
 
-    def __init__(self, domain: str, domain_root: str, host: str, config: dict):
+    def __init__(self, domain, domain_root, host, config):
+        """Creates config object from /settings output of DNS provider
+
+        :param domain: str
+        :param domain_root: str
+        :param host: str
+        :param config: dict
+        """
         self.domain = domain
         self.domain_root = domain_root
         self.host = host
@@ -66,7 +73,17 @@ class DomainConnectAsyncContext:
     refresh_token: str = None
     access_token_expires_in: int = None
 
-    def __init__(self, config: DomainConnectConfig, provider_id: str, service_id: str, return_url: str, params: dict):
+    def __init__(self, config, provider_id, service_id, return_url, params):
+        """Initiates the object
+
+        :param config: DomainConnectConfig
+            Config. See: DomainConnect.get_domain_config
+        :param provider_id: str
+        :param service_id: str
+        :param return_url: str
+            Return URL of the request
+        :param params: dict
+        """
         self.config = config
         self.providerId = provider_id
         self.serviceId = service_id
@@ -74,12 +91,19 @@ class DomainConnectAsyncContext:
         self.params = params
         self.client_secret = ''
 
+
 class DomainConnectAsyncCredentials:
     client_id: str = None
     client_secret: str = None
     api_url: str = None
 
-    def __init__(self, client_id: str, client_secret: str, api_url: str):
+    def __init__(self, client_id, client_secret, api_url):
+        """Initializes the object
+
+        :param client_id: str
+        :param client_secret: str
+        :param api_url: str
+        """
         self.client_id = client_id
         self.client_secret = client_secret
         self.api_url = api_url
@@ -96,7 +120,7 @@ class DomainConnect:
         return psl.get_public_suffix(domain)
 
     @staticmethod
-    def identify_domain_connect_api(domain_root):
+    def _identify_domain_connect_api(domain_root):
         # noinspection PyBroadException
         try:
             dns = resolver.query('_domainconnect.{}'.format(domain_root), 'TXT')
@@ -120,66 +144,20 @@ class DomainConnect:
         print('No Domain Connect API found for "{}"'.format(domain_root))
         return None, 'No Domain Connect API found for "{}"'.format(domain_root)
 
-    @staticmethod
-    def get_sync_url(config: dict) -> (str, str):
-        """
+    def get_domain_config(self, domain):
+        """Makes a discovery of domain name and resolves configuration of DNS provider
 
-        :param config: domain connect config, see: DomainConnect.get_domain_config
-        :return: (url, error text)
-        """
-        if 'urlSyncUX' in config:
-            return config['urlSyncUX'], None
-        else:
-            return None, 'No urlSyncUX in config'
-
-    @staticmethod
-    def get_async_url(config: dict) -> (str, str):
-        """
-
-        :param config: domain connect config, see: DomainConnect.get_domain_config
-        :return: (url, error text)
-        """
-        if 'urlAsyncUX' in config:
-            return config['urlAsyncUX'], None
-        else:
-            return None, 'No urlAsyncUX in config'
-
-    @staticmethod
-    def get_async_api_url(config: dict) -> (str, str):
-        """
-
-        :param config: domain connect config, see: DomainConnect.get_domain_config
-        :return: (url, error text)
-        """
-        if 'urlAPI' in config:
-            return config['urlAPI'], None
-        else:
-            return None, 'No urlAPI in config'
-
-    @staticmethod
-    def get_ux_size_url(config: dict) -> (str, str):
-        """
-
-        :param config: domain connect config, see: DomainConnect.get_domain_config
-        :return: ((width, height), error text)
-        """
-        if 'width' in config and 'height' in config:
-            return (config['width', 'height']), None
-        else:
-            return None, 'No width or height in config'
-
-    def get_domain_config(self, domain: str) -> (DomainConnectConfig, str):
-        """
-
-        :param domain: domain name
-        :return: (domain connect config, error text)
+        :param domain: str
+            domain name
+        :return: (DomainConnectConfig, str)
+            (domain connect config, error text)
         """
         domain_root = self.identify_domain_root(domain)
 
         host = ''
         if len(domain_root) != len(domain):
             host = domain.replace('.' + domain_root, '')
-        domain_connect_api, error = self.identify_domain_connect_api(domain_root)
+        domain_connect_api, error = self._identify_domain_connect_api(domain_root)
         if error:
             return None, error
         else:
@@ -189,12 +167,15 @@ class DomainConnect:
             else:
                 return DomainConnectConfig(domain, domain_root, host, ret), None
 
-    def _get_domain_config_for_root(self, domain_root: str, domain_connect_api: str) -> (dict, str):
+    def _get_domain_config_for_root(self, domain_root, domain_connect_api):
         """
 
-        :param domain_root: domain name for zone root
-        :param domain_connect_api: URL of domain connect API of the vendor
-        :return: (domain connect config, error text)
+        :param domain_root: str
+            domain name for zone root
+        :param domain_connect_api: str
+            URL of domain connect API of the vendor
+        :return: (dict, str)
+            (domain connect config, error text)
         """
         url = 'https://{}/v2/{}/settings'.format(domain_connect_api, domain_root)
         try:
@@ -207,13 +188,17 @@ class DomainConnect:
         print('No Domain Connect config found for {}.'.format(domain_root))
         return None, 'No Domain Connect config found for {}.'.format(domain_root)
 
-    def check_template_supported(self, config: DomainConnectConfig, provider_id: str, service_id: str) -> (dict, str):
+    def check_template_supported(self, config, provider_id, service_id):
         """
 
-        :param config: domain connect config
-        :param provider_id: provider_id to check
-        :param service_id: service_id to check
-        :return: (template supported, error)
+        :param config: DomainConnectConfig
+            domain connect config
+        :param provider_id: str
+            provider_id to check
+        :param service_id: str
+            service_id to check
+        :return: (dict, str)
+            (template supported, error)
         """
         url = '{}/v2/domainTemplates/providers/{}/services/{}' \
             .format(config.urlAPI, provider_id, service_id)
@@ -230,6 +215,18 @@ class DomainConnect:
 
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params=None,
                                              state=None):
+        """Makes full Domain Connect discovery of a domain and returns full url to request sync consent.
+
+        :param domain: str
+        :param provider_id: str
+        :param service_id: str
+        :param redirect_uri: str
+        :param params: dict
+        :param state: str
+        :return: (str, str)
+            first field is an url which shall be used to redirect the browser to
+            second field is an indication of error
+        """
         # TODO: support for groupIds
         # TODO: support for signatures
         # TODO: support for provider_name (for shared templates)
@@ -261,9 +258,21 @@ class DomainConnect:
         else:
             return None, error
 
-    def get_domain_connect_template_async_url(self, domain, provider_id, service_id, redirect_uri, params=None,
-                                              state=None, service_id_in_path=False) -> (DomainConnectAsyncContext, str):
+    def get_domain_connect_template_async_context(self, domain, provider_id, service_id, redirect_uri, params=None,
+                                                  state=None, service_id_in_path=False):
+        """Makes full Domain Connect discovery of a domain and returns full context to request async consent.
 
+        :param domain: str
+        :param provider_id: str
+        :param service_id: str
+        :param redirect_uri: str
+        :param params: dict
+        :param state: str
+        :param service_id_in_path: bool
+        :return: (DomainConnectAsyncContext, str)
+            asyncConsentUrl field of returned context shall be used to redirect the browser to
+            second field is an indication of error
+        """
         if params is None:
             params = {}
         config, error = self.get_domain_config(domain)
@@ -301,8 +310,8 @@ class DomainConnect:
                                                state=None, service_id_in_path=False):
         if params is None:
             params = {}
-        async_context, error = self.get_domain_connect_template_async_url(domain, provider_id, service_id, redirect_uri,
-                                                                          params, state, service_id_in_path)
+        async_context, error = self.get_domain_connect_template_async_context(
+            domain, provider_id, service_id, redirect_uri, params, state, service_id_in_path)
         if error:
             return None, "Error when getting starting URL: {}".format(error)
 
@@ -312,10 +321,18 @@ class DomainConnect:
         except webbrowser.Error as err:
             return None, "Error opening browser window: {}".format(err)
 
-    def get_async_token(self, context: DomainConnectAsyncContext, credentials: DomainConnectAsyncCredentials) -> (DomainConnectAsyncContext, str):
+    def get_async_token(self, context, credentials):
+        """Gets access_token in async process
+
+        :param context: DomainConnectAsyncContext
+        :param credentials: DomainConnectAsyncCredentials
+        :return: (DomainConnectAsyncContext, str)
+            (context enriched with access_token and refresh_token if existing, error)
+        """
         params = {'code': context.code, 'redirect_uri': context.return_url, 'grant_type': 'authorization_code'}
 
-        # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by a malicious user
+        # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by
+        # a malicious user
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
                                                                     urllib.parse.urlencode(params))
         try:

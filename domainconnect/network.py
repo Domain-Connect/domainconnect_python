@@ -15,7 +15,8 @@ class NetworkContext:
         self.proxyHost = proxy_host
 
 
-def http_request_json(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None, content_type=None, cache_control=None):
+def http_request_json(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None,
+                      content_type=None, cache_control=None):
     return json.loads(http_request(context=context,
                                    method=method,
                                    url=url,
