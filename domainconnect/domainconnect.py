@@ -104,9 +104,12 @@ class DomainConnectAsyncContext:
 
 
 class DomainConnectAsyncCredentials:
-    client_id: str = None
-    client_secret: str = None
-    api_url: str = None
+    client_id = None
+    """ :type: str """
+    client_secret= None
+    """ :type: str """
+    api_url = None
+    """ :type: str """
 
     def __init__(self, client_id, client_secret, api_url):
         """Initializes the object
@@ -378,8 +381,18 @@ class DomainConnect:
 
         return context, None
 
-    def apply_domain_connect_template_async(self, context: DomainConnectAsyncContext, host: str = None, service_id=None,
+    def apply_domain_connect_template_async(self, context, host=None, service_id=None,
                                             params=None, force=False):
+        """
+
+        :param context: DomainConnectAsyncContext
+        :param host: str
+        :param service_id:
+        :param params:
+        :param force:
+        :return: (str, str)
+            If success it's ("Success", None), otherwise (None, error)
+        """
         # TODO: support for groupIds
         if params is None:
             params = {}
