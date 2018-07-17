@@ -1,5 +1,5 @@
 from unittest import TestCase
-from domainconnect import DomainConnect
+from domainconnect import DomainConnect, DomainConnectAsyncCredentials
 # to assure input works like raw_input in python 2
 from builtins import input
 
@@ -10,8 +10,7 @@ oneandone_config = \
         SYNC_URL='https://domainconnect.1and1.com/sync',
         ASYNC_URL='https://domainconnect.1and1.com/async',
         ASYNC_SERVICE_IN_PATH=False,
-        API_URL='https://api.domainconnect.1and1.com',
-        CLIENT_SECRET='cd$;CVZRj#B8C@o3o8E4v-*k2H7S%)'
+        API_URL='https://api.domainconnect.1and1.com'
     )
 
 godaddy_config = \
@@ -21,9 +20,17 @@ godaddy_config = \
         SYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_SERVICE_IN_PATH=True,
-        API_URL='https://domainconnect.api.godaddy.com',
-        CLIENT_SECRET='DomainConnectGeheimnisSecretString'
+        API_URL='https://domainconnect.api.godaddy.com'
     )
+
+test_credentials = {
+    "1and1": DomainConnectAsyncCredentials(client_id='exampleservice.domainconnect.org',
+                                           client_secret='cd$;CVZRj#B8C@o3o8E4v-*k2H7S%)',
+                                           api_url=oneandone_config['API_URL']),
+    "GoDaddy": DomainConnectAsyncCredentials(client_id='exampleservice.domainconnect.org',
+                                           client_secret='DomainConnectGeheimnisSecretString',
+                                           api_url=godaddy_config['API_URL']),
+}
 
 configs = [oneandone_config, godaddy_config]
 
@@ -186,9 +193,8 @@ class TestDomainConnect(TestCase):
 
         code = input("Please enter code: ")
         context.code = code
-        context.client_secret = config['CLIENT_SECRET']
 
-        ctx, error = dc.get_async_token(context)
+        ctx, error = dc.get_async_token(context, test_credentials[context.config.providerName])
         assert (error is None), "Error occured: {}".format(error)
         assert (ctx.access_token is not None), 'Access token missing'
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'

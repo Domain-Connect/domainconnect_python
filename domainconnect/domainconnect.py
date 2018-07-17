@@ -25,8 +25,11 @@ class DomainConnectConfig:
     urlSyncUX = None
     urlAsyncUX = None
     urlAPI = None
+    providerId = None
     providerName = None
+    providerDisplayName = None
     uxSize = None
+    urlControlPanel = None
 
     def __init__(self, domain: str, domain_root: str, host: str, config: dict):
         self.domain = domain
@@ -38,10 +41,16 @@ class DomainConnectConfig:
             self.urlAsyncUX = config['urlAsyncUX']
         if 'urlAPI' in config:
             self.urlAPI = config['urlAPI']
+        if 'providerId' in config:
+            self.providerId = config['providerId']
         if 'providerName' in config:
             self.providerName = config['providerName']
+        if 'providerDisplayName' in config:
+            self.providerDisplayName = config['providerDisplayName']
         if 'width' in config and 'height' in config:
             self.uxSize = (config['width'], config['height'])
+        if 'urlControlPanel' in config:
+            self.urlControlPanel = config['urlControlPanel']
 
 
 class DomainConnectAsyncContext:
@@ -64,6 +73,16 @@ class DomainConnectAsyncContext:
         self.return_url = return_url
         self.params = params
         self.client_secret = ''
+
+class DomainConnectAsyncCredentials:
+    client_id: str = None
+    client_secret: str = None
+    api_url: str = None
+
+    def __init__(self, client_id: str, client_secret: str, api_url: str):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.api_url = api_url
 
 
 class DomainConnect:
@@ -293,19 +312,22 @@ class DomainConnect:
         except webbrowser.Error as err:
             return None, "Error opening browser window: {}".format(err)
 
-    def get_async_token(self, context: DomainConnectAsyncContext) -> (DomainConnectAsyncContext, str):
+    def get_async_token(self, context: DomainConnectAsyncContext, credentials: DomainConnectAsyncCredentials) -> (DomainConnectAsyncContext, str):
         params = {'code': context.code, 'redirect_uri': context.return_url, 'grant_type': 'authorization_code'}
 
         # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by a malicious user
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
                                                                     urllib.parse.urlencode(params))
         try:
+            # this has to be checked to avoid secret leakage by spoofed "settings" end-point
+            if credentials.api_url != context.config.urlAPI:
+                raise Exception("URL API for provider does not match registered one with credentials")
             data = http_request_json(self._networkContext,
                                      method='POST',
                                      content_type='application/json',
                                      body=json.dumps({
-                                         'client_id': context.providerId,
-                                         'client_secret': context.client_secret,
+                                         'client_id': credentials.client_id,
+                                         'client_secret': credentials.client_secret,
                                      }),
                                      url=url_get_access_token
                                      )
