@@ -330,6 +330,7 @@ class DomainConnect:
             return None, "Error when getting starting URL: {}".format(error)
 
         try:
+            print ('Please open URL: {}'.format(async_context.asyncConsentUrl))
             webbrowser.open_new_tab(async_context.asyncConsentUrl)
             return async_context, None
         except webbrowser.Error as err:
