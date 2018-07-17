@@ -61,17 +61,28 @@ class DomainConnectConfig:
 
 
 class DomainConnectAsyncContext:
-    config: DomainConnectConfig = None
-    providerId: str = None
-    serviceId: str = None
-    client_secret: str = None
-    asyncConsentUrl: str = None
-    code: str = None
-    params: dict = None
-    return_url: str = None
-    access_token: str = None
-    refresh_token: str = None
-    access_token_expires_in: int = None
+    config = None
+    """ :type: DomainConnectConfig """
+    providerId = None
+    """ :type: str """
+    serviceId = None
+    """ :type: str """
+    client_secret = None
+    """ :type: str """
+    asyncConsentUrl  = None
+    """ :type: str """
+    code = None
+    """ :type: str """
+    params = None
+    """ :type: dict """
+    return_url = None
+    """ :type: str """
+    access_token = None
+    """ :type: str """
+    refresh_token = None
+    """ :type: str """
+    access_token_expires_in = None
+    """ :type: int """
 
     def __init__(self, config, provider_id, service_id, return_url, params):
         """Initiates the object

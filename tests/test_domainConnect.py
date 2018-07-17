@@ -178,7 +178,7 @@ class TestDomainConnect(TestCase):
         params = {"IP": "132.148.25.185",
                   "RANDOMTEXT": "shm:1531371203:Hejo async"}
 
-        dc: DomainConnect = DomainConnect()
+        dc = DomainConnect()
         context, error = dc.open_domain_connect_template_asynclink(
             'asyncpage.' + config['TEST_DOMAIN'],
             'exampleservice.domainconnect.org',
