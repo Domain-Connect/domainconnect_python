@@ -9,11 +9,11 @@ setup(name='Domain Connect',
       author_email='pawel-kow@users.noreply.github.com',
       url='https://github.com/pawel-kow/domainconnect_python',
       license='https://github.com/pawel-kow/domainconnect_python/blob/master/LICENSE',
-      packages=['domainconnect'],
-      requires=[
-          'dnspython>=1.15.0',
-          'publicsuffix>=1.1.0',
-          'publicsuffixlist>=0.6.1',
-          'six>=1.11.0'
+      packages=['domainconnect',],
+      install_requires=[
+          'dnspython >= 1.15.0',
+          'publicsuffix >= 1.1.0',
+          'publicsuffixlist >= 0.6.1',
+          'six >= 1.11.0'
       ],
       )

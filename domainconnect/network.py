@@ -10,13 +10,25 @@ class NetworkContext:
     proxyHost = None
     proxyPort = None
 
-    def __init__(self, proxy_host: str = None, proxy_port: str = None) -> None:
+    def __init__(self, proxy_host = None, proxy_port = None) -> None:
         self.proxyPort = proxy_port
         self.proxyHost = proxy_host
 
 
-def http_request_json(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None,
+def http_request_json(context, method, url, body=None, basic_auth=None, bearer=None,
                       content_type=None, cache_control=None):
+    """
+
+    :param context: NetworkContext
+    :param method: str
+    :param url: str
+    :param body: str
+    :param basic_auth: str
+    :param bearer: str
+    :param content_type: str
+    :param cache_control: str
+    :return:
+    """
     return json.loads(http_request(context=context,
                                    method=method,
                                    url=url,
@@ -28,8 +40,21 @@ def http_request_json(context: NetworkContext, method, url, body=None, basic_aut
                                    accepts='application/json'))
 
 
-def http_request(context: NetworkContext, method, url, body=None, basic_auth=None, bearer=None, content_type=None,
+def http_request(context, method, url, body=None, basic_auth=None, bearer=None, content_type=None,
                  accepts=None, cache_control=None):
+    """
+
+    :param context: NetworkContext
+    :param method: str
+    :param url: str
+    :param body: str
+    :param basic_auth: str
+    :param bearer: str
+    :param content_type: str
+    :param accepts: str
+    :param cache_control: str
+    :return:
+    """
     connection = None
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
@@ -80,7 +105,16 @@ def http_request(context: NetworkContext, method, url, body=None, basic_auth=Non
     return ret
 
 
-def post_data(context: NetworkContext, url, data, basic_auth=None, bearer=None):
+def post_data(context, url, data, basic_auth=None, bearer=None):
+    """
+
+    :param context: NetworkContext
+    :param url: str
+    :param data: str
+    :param basic_auth: str
+    :param bearer: str
+    :return:
+    """
     response = http_request(context=context, method='POST', url=url, body=data, basic_auth=basic_auth,
                             bearer=bearer, content_type='application/x-www-form-urlencoded')
     if response.status != 200:
@@ -89,7 +123,16 @@ def post_data(context: NetworkContext, url, data, basic_auth=None, bearer=None):
     return response.read().decode('utf-8')
 
 
-def post_json(context: NetworkContext, url, content, basic_auth=None, bearer=None):
+def post_json(context, url, content, basic_auth=None, bearer=None):
+    """
+
+    :param context: NetworkContext
+    :param url: str
+    :param content: str
+    :param basic_auth: str
+    :param bearer: str
+    :return:
+    """
     response = http_request(context=context, method='POST', url=url, body=json.dumps(content), basic_auth=basic_auth,
                             bearer=bearer, content_type='application/json')
     if response.status != 200:
@@ -98,11 +141,23 @@ def post_json(context: NetworkContext, url, content, basic_auth=None, bearer=Non
     return response.read().decode('utf-8')
 
 
-def get_json(context: NetworkContext, url: str):
+def get_json(context, url: str):
+    """
+
+    :param context: NetworkContext
+    :param url: str
+    :return:
+    """
     return json.loads(get_http(context, url))
 
 
-def get_http(context: NetworkContext, url: str):
+def get_http(context, url: str):
+    """
+
+    :param context: NetworkContext
+    :param url: str
+    :return:
+    """
     connection = None
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
@@ -140,7 +195,15 @@ def get_http(context: NetworkContext, url: str):
     return ret
 
 
-def get_json_auth(context: NetworkContext, url, basic_auth=None, bearer=None):
+def get_json_auth(context, url, basic_auth=None, bearer=None):
+    """
+
+    :param context: NetworkContext
+    :param url: str
+    :param basic_auth: str
+    :param bearer: str
+    :return:
+    """
     response = http_request(context=context, method='GET', url=url, basic_auth=basic_auth, bearer=bearer)
     if response.status != 200:
         print(response.getheaders())
