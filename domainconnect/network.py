@@ -141,7 +141,7 @@ def post_json(context, url, content, basic_auth=None, bearer=None):
     return response.read().decode('utf-8')
 
 
-def get_json(context, url: str):
+def get_json(context, url):
     """
 
     :param context: NetworkContext
@@ -151,7 +151,7 @@ def get_json(context, url: str):
     return json.loads(get_http(context, url))
 
 
-def get_http(context, url: str):
+def get_http(context, url):
     """
 
     :param context: NetworkContext
