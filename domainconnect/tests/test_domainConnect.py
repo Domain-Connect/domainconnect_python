@@ -64,7 +64,6 @@ class TestDomainConnect(TestCase):
                                                              "template1",
                                                              params={"IP": "132.148.25.185",
                                                                      "RANDOMTEXT": "shm:1531371203:Hejo"})
-        print(res)
         assert (error is None), "2. There is an error returned: {}".format(error)
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
@@ -141,7 +140,6 @@ class TestDomainConnect(TestCase):
             params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
             redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response",
             state="{name=value}")
-        print(res)
         assert (error is None), "There is an error returned: {}".format(error)
         assert (res.asyncConsentUrl == config['ASYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org'
@@ -159,7 +157,6 @@ class TestDomainConnect(TestCase):
             params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
             redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response",
             state="{name=value}")
-        print(res)
         assert (error is None), "There is an error returned"
         assert (res.asyncConsentUrl == config['ASYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org'
@@ -176,7 +173,6 @@ class TestDomainConnect(TestCase):
             "template_not_exists",
             params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
             redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response")
-        print(res)
         assert (error is not None), "There is no error returned and was expected"
         assert (res is None), "There was no url expected: {}".format(res.asyncConsentUrl)
 

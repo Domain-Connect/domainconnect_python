@@ -1,3 +1,7 @@
+import logging
+logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
+logger = logging.getLogger(__name__)
+
 import json
 
 from six.moves import urllib
@@ -137,23 +141,23 @@ class DomainConnect:
         try:
             dns = self._resolver.query('_domainconnect.{}'.format(domain_root), 'TXT')
             domain_connect_api = str(dns[0]).replace('"', '')
-            print('Domain Connect API {} for {} found.'.format(domain_connect_api, domain_root))
+            logger.debug('Domain Connect API {} for {} found.'.format(domain_connect_api, domain_root))
             return domain_connect_api, None
         except Timeout:
-            print('Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
+            logger.debug('Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
             return None, 'Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root)
         except NXDOMAIN or YXDOMAIN:
-            print('Failed to resolve "{}"'.format(domain_root))
+            logger.debug('Failed to resolve "{}"'.format(domain_root))
             return None, 'Failed to resolve "{}"'.format(domain_root)
         except NoAnswer:
-            print('No Domain Connect API found for "{}"'.format(domain_root))
+            logger.debug('No Domain Connect API found for "{}"'.format(domain_root))
             return None, 'No Domain Connect API found for "{}"'.format(domain_root)
         except NoNameservers:
-            print('No nameservers avalaible for "{}"'.format(domain_root))
+            logger.debug('No nameservers avalaible for "{}"'.format(domain_root))
             return None, 'No nameservers avalaible for "{}"'.format(domain_root)
         except Exception:
             pass
-        print('No Domain Connect API found for "{}"'.format(domain_root))
+        logger.debug('No Domain Connect API found for "{}"'.format(domain_root))
         return None, 'No Domain Connect API found for "{}"'.format(domain_root)
 
     def get_domain_config(self, domain):
@@ -192,12 +196,12 @@ class DomainConnect:
         url = 'https://{}/v2/{}/settings'.format(domain_connect_api, domain_root)
         try:
             response = get_json(self._networkContext, url)
-            print('Domain Connect config for {} over {}: {}'.format(domain_root, domain_connect_api,
+            logger.debug('Domain Connect config for {} over {}: {}'.format(domain_root, domain_connect_api,
                                                                     response))
             return response, None
         except Exception as e:
-            print("Exception when getting config:{}".format(e))
-        print('No Domain Connect config found for {}.'.format(domain_root))
+            logger.debug("Exception when getting config:{}".format(e))
+        logger.debug('No Domain Connect config found for {}.'.format(domain_root))
         return None, 'No Domain Connect config found for {}.'.format(domain_root)
 
     def check_template_supported(self, config, provider_id, service_ids):
@@ -222,10 +226,10 @@ class DomainConnect:
 
             try:
                 response = get_http(self._networkContext, url)
-                print('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
+                logger.debug('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
                                                                       response))
             except Exception as e:
-                print("Exception when getting config:{}".format(e))
+                logger.debug("Exception when getting config:{}".format(e))
                 return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
 
         return "All OK", None
@@ -373,14 +377,14 @@ class DomainConnect:
                                              url=url_get_access_token
                                              )
         except Exception as ex:
-            print('Cannot get async token: {}'.format(ex))
+            logger.debug('Cannot get async token: {}'.format(ex))
             return None, 'Cannot get async token: {}'.format(ex)
 
         if 'access_token' not in data \
                 or 'expires_in' not in data \
                 or 'token_type' not in data \
                 or data['token_type'].lower() != 'bearer':
-            print('Token not complete: {}'.format(data))
+            logger.debug('Token not complete: {}'.format(data))
             return None, 'Token not complete: {}'.format(data)
 
         context.access_token = data['access_token']
