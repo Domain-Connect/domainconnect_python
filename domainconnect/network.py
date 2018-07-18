@@ -1,13 +1,12 @@
 import logging
-logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
-logger = logging.getLogger(__name__)
-
 import base64
 import json
 import re
 import ssl
-
 from six.moves import http_client as client
+
+logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
+logger = logging.getLogger(__name__)
 
 
 class NetworkContext:

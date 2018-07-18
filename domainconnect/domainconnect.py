@@ -1,18 +1,14 @@
 import logging
-logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
-logger = logging.getLogger(__name__)
-
 import json
-
 from six.moves import urllib
-
 from dns.exception import Timeout
 from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
-
 from publicsuffix import PublicSuffixList
 import webbrowser
-
 from .network import get_json, get_http, http_request_json, NetworkContext
+
+logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
+logger = logging.getLogger(__name__)
 
 psl = PublicSuffixList()
 
@@ -197,7 +193,7 @@ class DomainConnect:
         try:
             response = get_json(self._networkContext, url)
             logger.debug('Domain Connect config for {} over {}: {}'.format(domain_root, domain_connect_api,
-                                                                    response))
+                                                                           response))
             return response, None
         except Exception as e:
             logger.debug("Exception when getting config:{}".format(e))
@@ -227,7 +223,7 @@ class DomainConnect:
             try:
                 response = get_http(self._networkContext, url)
                 logger.debug('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
-                                                                      response))
+                                                                             response))
             except Exception as e:
                 logger.debug("Exception when getting config:{}".format(e))
                 return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
