@@ -1,5 +1,5 @@
 from unittest2 import TestCase
-from domainconnect import DomainConnect, DomainConnectAsyncCredentials
+from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException
 # to assure input works like raw_input in python 2
 from builtins import input
 
@@ -100,24 +100,26 @@ class TestDomainConnect(TestCase):
                   '&groupId=a%2Cb'), \
             "4. URL is different than expected: {}".format(res)
 
-        # simple test template does not exits
-        res, error = dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
-                                                             "template_not_exists",
-                                                             params={"IP": "132.148.25.185",
-                                                                     "RANDOMTEXT": "shm:1531371203:Hejo"})
-        assert (error is not None), "5. There is no error returned and was expected"
-        assert (res is None), "5. There was no url expected and came: {}".format(res)
+        # simple test template does not exist
+        try:
+            dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
+                                                                 "template_not_exists",
+                                                                 params={"IP": "132.148.25.185",
+                                                                         "RANDOMTEXT": "shm:1531371203:Hejo"})
+            assert (False), "5. There is no error returned and was expected"
+            assert (res is None), "5. There was no url expected and came: {}".format(res)
+        except TemplateNotSupportedException:
+            pass
 
     def test_get_domain_config(self):
         for i in configs:
             with self.subTest(i=i):
-                TestDomainConnect._test_get_domain_config(i)
+                self._test_get_domain_config(i)
 
     @staticmethod
     def _test_get_domain_config(config):
         dc = DomainConnect()
-        res, error = dc.get_domain_config('testhost.' + config['TEST_DOMAIN'])
-        assert (error is None), 'There is an error returned'
+        res = dc.get_domain_config('testhost.' + config['TEST_DOMAIN'])
         assert (res.domain_root == config['TEST_DOMAIN']), 'Domain root wrong: {}'.format(res.domain_root)
         assert (res.host == 'testhost'), 'Host not correct: {}'.format(res.host)
         assert (res.urlSyncUX == config['SYNC_URL']), 'urlSyncUX not correct: {}'.format(res.urlSyncUX)
@@ -167,14 +169,16 @@ class TestDomainConnect(TestCase):
                   'async_oauth_response&state=%7Bname%3Dvalue%7D'), \
             "URL is different than expected: {}".format(res[0])
 
-        # simple test template does not exits
-        res, error = dc.get_domain_connect_template_async_context(
-            config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
-            "template_not_exists",
-            params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
-            redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response")
-        assert (error is not None), "There is no error returned and was expected"
-        assert (res is None), "There was no url expected: {}".format(res.asyncConsentUrl)
+        # simple test template does not exist
+        try:
+            dc.get_domain_connect_template_async_context(
+                config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
+                "template_not_exists",
+                params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
+                redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response")
+            assert (False), "There is no error returned and was expected"
+        except TemplateNotSupportedException:
+            pass
 
     def test_get_domain_connect_async_open_browser(self):
         for i in configs:

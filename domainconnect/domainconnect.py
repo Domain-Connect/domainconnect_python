@@ -13,7 +13,29 @@ logger = logging.getLogger(__name__)
 psl = PublicSuffixList()
 
 
+class DomainConnectException(Exception):
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)
+
+
+class TemplateDoesNotExistException(DomainConnectException):
+    def __init__(self,*args,**kwargs):
+        DomainConnectException.__init__(self,*args,**kwargs)
+
+class NoDomainConnectRecordException(DomainConnectException):
+    def __init__(self,*args,**kwargs):
+        DomainConnectException.__init__(self,*args,**kwargs)
+
+class NoDomainConnectSettingsException(DomainConnectException):
+    def __init__(self,*args,**kwargs):
+        DomainConnectException.__init__(self,*args,**kwargs)
+
+class TemplateNotSupportedException(DomainConnectException):
+    def __init__(self,*args,**kwargs):
+        DomainConnectException.__init__(self,*args,**kwargs)
+
 class DomainConnectConfig:
+# TODO: implement serialization and deserialization to JSON
     domain = None
     domain_root = None
     host = None
@@ -138,46 +160,46 @@ class DomainConnect:
             dns = self._resolver.query('_domainconnect.{}'.format(domain_root), 'TXT')
             domain_connect_api = str(dns[0]).replace('"', '')
             logger.debug('Domain Connect API {} for {} found.'.format(domain_connect_api, domain_root))
-            return domain_connect_api, None
+            return domain_connect_api
         except Timeout:
             logger.debug('Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
-            return None, 'Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root)
+            raise NoDomainConnectRecordException('Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
         except NXDOMAIN or YXDOMAIN:
             logger.debug('Failed to resolve "{}"'.format(domain_root))
-            return None, 'Failed to resolve "{}"'.format(domain_root)
+            raise NoDomainConnectRecordException('Failed to resolve "{}"'.format(domain_root))
         except NoAnswer:
             logger.debug('No Domain Connect API found for "{}"'.format(domain_root))
-            return None, 'No Domain Connect API found for "{}"'.format(domain_root)
+            raise NoDomainConnectRecordException('No Domain Connect API found for "{}"'.format(domain_root))
         except NoNameservers:
             logger.debug('No nameservers avalaible for "{}"'.format(domain_root))
-            return None, 'No nameservers avalaible for "{}"'.format(domain_root)
+            raise NoDomainConnectRecordException('No nameservers avalaible for "{}"'.format(domain_root))
         except Exception:
             pass
         logger.debug('No Domain Connect API found for "{}"'.format(domain_root))
-        return None, 'No Domain Connect API found for "{}"'.format(domain_root)
+        raise NoDomainConnectRecordException('No Domain Connect API found for "{}"'.format(domain_root))
 
     def get_domain_config(self, domain):
         """Makes a discovery of domain name and resolves configuration of DNS provider
 
         :param domain: str
             domain name
-        :return: (DomainConnectConfig, str)
-            (domain connect config, error text)
+        :return: DomainConnectConfig
+            domain connect config
+        :raises: NoDomainConnectRecordException
+            when no _domainconnect record found
+        :raises: NoDomainConnectSettingsException
+            when settings are not found
         """
         domain_root = self.identify_domain_root(domain)
 
         host = ''
         if len(domain_root) != len(domain):
             host = domain.replace('.' + domain_root, '')
-        domain_connect_api, error = self._identify_domain_connect_api(domain_root)
-        if error:
-            return None, error
-        else:
-            ret, error2 = self._get_domain_config_for_root(domain_root, domain_connect_api)
-            if error2:
-                return None, error2
-            else:
-                return DomainConnectConfig(domain, domain_root, host, ret), None
+
+        domain_connect_api = self._identify_domain_connect_api(domain_root)
+
+        ret= self._get_domain_config_for_root(domain_root, domain_connect_api)
+        return DomainConnectConfig(domain, domain_root, host, ret)
 
     def _get_domain_config_for_root(self, domain_root, domain_connect_api):
         """
@@ -186,19 +208,23 @@ class DomainConnect:
             domain name for zone root
         :param domain_connect_api: str
             URL of domain connect API of the vendor
-        :return: (dict, str)
-            (domain connect config, error text)
+        :return: dict
+            domain connect config
+        :raises: NoDomainConnectRecordException
+            when no _domainconnect record found
+        :raises: NoDomainConnectSettingsException
+            when settings are not found
         """
         url = 'https://{}/v2/{}/settings'.format(domain_connect_api, domain_root)
         try:
             response = get_json(self._networkContext, url)
             logger.debug('Domain Connect config for {} over {}: {}'.format(domain_root, domain_connect_api,
                                                                            response))
-            return response, None
+            return response
         except Exception as e:
             logger.debug("Exception when getting config:{}".format(e))
         logger.debug('No Domain Connect config found for {}.'.format(domain_root))
-        return None, 'No Domain Connect config found for {}.'.format(domain_root)
+        raise NoDomainConnectSettingsException('No Domain Connect config found for {}.'.format(domain_root))
 
     def check_template_supported(self, config, provider_id, service_ids):
         """
@@ -211,6 +237,8 @@ class DomainConnect:
             service_id to check
         :return: (dict, str)
             (template supported, error)
+        :raises: TemplateNotSupportedException
+            when template is not supported
         """
 
         if type(service_ids) != list:
@@ -226,9 +254,8 @@ class DomainConnect:
                                                                              response))
             except Exception as e:
                 logger.debug("Exception when getting config:{}".format(e))
-                return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
+                raise TemplateNotSupportedException('No template for serviceId: {} from {}'.format(service_id, provider_id))
 
-        return "All OK", None
 
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params=None,
                                              state=None, group_ids=None):
@@ -244,6 +271,10 @@ class DomainConnect:
         :return: (str, str)
             first field is an url which shall be used to redirect the browser to
             second field is an indication of error
+        :raises: NoDomainConnectRecordException
+            when no _domainconnect record found
+        :raises: NoDomainConnectSettingsException
+            when settings are not found
         """
         # TODO: support for signatures
         # TODO: support for provider_name (for shared templates)
@@ -251,31 +282,25 @@ class DomainConnect:
         if params is None:
             params = {}
 
-        config, error = self.get_domain_config(domain)
+        config = self.get_domain_config(domain)
 
-        if error is None:
-            template, error_templ = self.check_template_supported(config, provider_id, service_id)
+        self.check_template_supported(config, provider_id, service_id)
 
-            if error_templ is not None:
-                return None, error_templ
+        if config.urlSyncUX is None:
+            return None, "No sync URL in config"
 
-            if config.urlSyncUX is None:
-                return None, "No sync URL in config"
+        sync_url_format = '{}/v2/domainTemplates/providers/{}/services/{}/' \
+                          'apply?domain={}&host={}&{}'
 
-            sync_url_format = '{}/v2/domainTemplates/providers/{}/services/{}/' \
-                              'apply?domain={}&host={}&{}'
+        if redirect_uri is not None:
+            params["redirect_uri"] = redirect_uri
+        if state is not None:
+            params["state"] = state
+        if group_ids is not None:
+            params["groupId"] = ",".join(group_ids)
 
-            if redirect_uri is not None:
-                params["redirect_uri"] = redirect_uri
-            if state is not None:
-                params["state"] = state
-            if group_ids is not None:
-                params["groupId"] = ",".join(group_ids)
-
-            return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host,
-                                          urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))), None
-        else:
-            return None, error
+        return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host,
+                                      urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))), None
 
     def get_domain_connect_template_async_context(self, domain, provider_id, service_id, redirect_uri, params=None,
                                                   state=None, service_id_in_path=False):
@@ -294,41 +319,36 @@ class DomainConnect:
         """
         if params is None:
             params = {}
-        config, error = self.get_domain_config(domain)
 
-        if error is None:
-            template, error_templ = self.check_template_supported(config, provider_id, service_id)
+        config = self.get_domain_config(domain)
 
-            if error_templ is not None:
-                return None, error_templ
+        self.check_template_supported(config, provider_id, service_id)
 
-            if config.urlAsyncUX is None:
-                return None, "No asynch UX URL in config"
+        if config.urlAsyncUX is None:
+            return None, "No asynch UX URL in config"
 
-            if service_id_in_path:
-                if type(service_id) is list:
-                    return None, "Multiple services are only supported with service_id_in_path=false"
-                async_url_format = '{0}/v2/domainTemplates/providers/{1}/services/{2}' \
-                                   '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
-            else:
-                if type(service_id) is list:
-                    service_id = ' '.join(service_id)
-                async_url_format = '{0}/v2/domainTemplates/providers/{1}' \
-                                   '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
-
-            if redirect_uri is not None:
-                params["redirect_uri"] = redirect_uri
-            if state is not None:
-                params["state"] = state
-
-            ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
-            ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id,
-                                                          config.domain_root, config.host,
-                                                          urllib.parse.urlencode(
-                                                              sorted(params.items(), key=lambda val: val[0])))
-            return ret, None
+        if service_id_in_path:
+            if type(service_id) is list:
+                return None, "Multiple services are only supported with service_id_in_path=false"
+            async_url_format = '{0}/v2/domainTemplates/providers/{1}/services/{2}' \
+                               '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
         else:
-            return None, error
+            if type(service_id) is list:
+                service_id = ' '.join(service_id)
+            async_url_format = '{0}/v2/domainTemplates/providers/{1}' \
+                               '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
+
+        if redirect_uri is not None:
+            params["redirect_uri"] = redirect_uri
+        if state is not None:
+            params["state"] = state
+
+        ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
+        ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id,
+                                                      config.domain_root, config.host,
+                                                      urllib.parse.urlencode(
+                                                          sorted(params.items(), key=lambda val: val[0])))
+        return ret, None
 
     def open_domain_connect_template_asynclink(self, domain, provider_id, service_id, redirect_uri, params=None,
                                                state=None, service_id_in_path=False):
@@ -393,6 +413,8 @@ class DomainConnect:
 
     def apply_domain_connect_template_async(self, context, host=None, service_id=None,
                                             params=None, force=False, group_ids=None):
+        # TODO: implement check of access_token validity and refresh
+
         """
 
         :param context: DomainConnectAsyncContext
