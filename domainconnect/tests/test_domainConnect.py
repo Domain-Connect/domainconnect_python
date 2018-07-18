@@ -196,3 +196,49 @@ class TestDomainConnect(TestCase):
         res, error = dc.apply_domain_connect_template_async(context, params=params)
         assert error is None, 'Error on apply: {}'.format(error)
         assert res == 'Success', 'Wrong result: {}'.format(res)
+
+    def test_get_domain_connect_async_conflict(self):
+        for i in configs:
+            with self.subTest(i=i):
+                self._test_get_domain_connect_async_conflict(i)
+
+    @staticmethod
+    def _test_get_domain_connect_async_conflict(config):
+        if config["ASYNC_SERVICE_IN_PATH"]:
+            print("Skipping test as service in path does not support multiple templates in consent: {}".format(config))
+            return
+
+        params = {"IP": "132.148.25.184",
+                  "RANDOMTEXT": "shm:1531371203:Hejo async"}
+
+        dc = DomainConnect()
+        context, error = dc.open_domain_connect_template_asynclink(
+            'asyncpage-conflict.' + config['TEST_DOMAIN'],
+            'exampleservice.domainconnect.org',
+            ['template1', 'template2'], params=params,
+            redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
+            service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
+
+        assert (error is None), "Error occured: {}".format(error)
+
+        code = input("Please enter code: ")
+        context.code = code
+
+        ctx, error = dc.get_async_token(context, test_credentials[context.config.providerName])
+        assert (error is None), "Error occured: {}".format(error)
+        assert (ctx.access_token is not None), 'Access token missing'
+        assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
+
+        res, error = dc.apply_domain_connect_template_async(context, service_id='template1', params=params)
+        assert error is None, '1. Error on apply: {}'.format(error)
+        assert res == 'Success', '1. Wrong result: {}'.format(res)
+
+        res, error = dc.apply_domain_connect_template_async(
+            context, service_id='template2',
+            params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo async in conflict"})
+        assert error is not None, '2. No error on apply'
+        assert res == 'Conflict', '2. We expected an error, got: {}'.format(res)
+
+        res, error = dc.apply_domain_connect_template_async(context, service_id='template1', params=params, force=True)
+        assert error is None, '3. Error on apply: {}'.format(error)
+        assert res == 'Success', '3. Wrong result: {}'.format(res)

@@ -15,33 +15,17 @@ class NetworkContext:
         self.proxyHost = proxy_host
 
 
-def http_request_json(context, method, url, body=None, basic_auth=None, bearer=None,
-                      content_type=None, cache_control=None):
+def http_request_json(*args, **kwargs):
     """
 
-    :param context: NetworkContext
-    :param method: str
-    :param url: str
-    :param body: str
-    :param basic_auth: str
-    :param bearer: str
-    :param content_type: str
-    :param cache_control: str
-    :return:
+    See: http_request
     """
-    return json.loads(http_request(context=context,
-                                   method=method,
-                                   url=url,
-                                   body=body,
-                                   basic_auth=basic_auth,
-                                   bearer=bearer,
-                                   content_type=content_type,
-                                   cache_control=cache_control,
-                                   accepts='application/json'))
+    ret, status = http_request(*args, **kwargs)
+    return json.loads(ret), status
 
 
 def http_request(context, method, url, body=None, basic_auth=None, bearer=None, content_type=None,
-                 accepts=None, cache_control=None):
+                 accepts=None, cache_control=None, accepted_statuses=None):
     """
 
     :param context: NetworkContext
@@ -53,8 +37,13 @@ def http_request(context, method, url, body=None, basic_auth=None, bearer=None, 
     :param content_type: str
     :param accepts: str
     :param cache_control: str
+    :param accepted_statuses: list(str)
+        list statuses which do not rise exception
     :return:
     """
+    if accepted_statuses is None:
+        accepted_statuses = [200]
+
     connection = None
     url_parts = re.match('(?i)(https?)://([^:/]+(?::\d+)?)(/.*)', url)
     if url_parts is None:
@@ -95,14 +84,14 @@ def http_request(context, method, url, body=None, basic_auth=None, bearer=None, 
             header['Cache-Control'] = cache_control
         connection.request(method, path, body, header)
         response = connection.getresponse()
-        if response.status != 200:
+        if response.status not in accepted_statuses:
             print('Failed to query {}: {}'.format(url, response.status))
             raise Exception('Failed to read from {}. HTTP code: {}'.format(url, response.status))
         ret = response.read().decode('utf-8')
+        return ret, response.status
     finally:
         if connection is not None:
             connection.close()
-    return ret
 
 
 def post_data(context, url, data, basic_auth=None, bearer=None):
@@ -115,8 +104,8 @@ def post_data(context, url, data, basic_auth=None, bearer=None):
     :param bearer: str
     :return:
     """
-    response = http_request(context=context, method='POST', url=url, body=data, basic_auth=basic_auth,
-                            bearer=bearer, content_type='application/x-www-form-urlencoded')
+    response, status = http_request(context=context, method='POST', url=url, body=data, basic_auth=basic_auth,
+                                    bearer=bearer, content_type='application/x-www-form-urlencoded')
     if response.status != 200:
         print(response.getheaders())
         raise Exception('Failed to POST data to {}'.format(url))
@@ -133,9 +122,10 @@ def post_json(context, url, content, basic_auth=None, bearer=None):
     :param bearer: str
     :return:
     """
-    response = http_request(context=context, method='POST', url=url, body=json.dumps(content), basic_auth=basic_auth,
-                            bearer=bearer, content_type='application/json')
-    if response.status != 200:
+    response, status = http_request(
+        context=context, method='POST', url=url, body=json.dumps(content),
+        basic_auth=basic_auth, bearer=bearer, content_type='application/json')
+    if status != 200:
         print(response.getheaders())
         raise Exception('Failed to POST json to {}'.format(url))
     return response.read().decode('utf-8')
@@ -204,8 +194,8 @@ def get_json_auth(context, url, basic_auth=None, bearer=None):
     :param bearer: str
     :return:
     """
-    response = http_request(context=context, method='GET', url=url, basic_auth=basic_auth, bearer=bearer)
-    if response.status != 200:
+    response, status = http_request(context=context, method='GET', url=url, basic_auth=basic_auth, bearer=bearer)
+    if status != 200:
         print(response.getheaders())
         raise Exception('Failed to GET from {}'.format(url))
     return json.loads(response.read().decode('utf-8'))

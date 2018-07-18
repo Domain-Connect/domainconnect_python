@@ -202,30 +202,35 @@ class DomainConnect:
         print('No Domain Connect config found for {}.'.format(domain_root))
         return None, 'No Domain Connect config found for {}.'.format(domain_root)
 
-    def check_template_supported(self, config, provider_id, service_id):
+    def check_template_supported(self, config, provider_id, service_ids):
         """
 
         :param config: DomainConnectConfig
             domain connect config
         :param provider_id: str
             provider_id to check
-        :param service_id: str
+        :param service_ids: str
             service_id to check
         :return: (dict, str)
             (template supported, error)
         """
-        url = '{}/v2/domainTemplates/providers/{}/services/{}' \
-            .format(config.urlAPI, provider_id, service_id)
 
-        try:
-            response = get_http(self._networkContext, url)
-            print('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
-                                                                  response))
-            return response, None
-        except Exception as e:
-            print("Exception when getting config:{}".format(e))
-        print('No template for serviceId: {} from {}'.format(service_id, provider_id))
-        return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
+        if type(service_ids) != list:
+            service_ids = [service_ids]
+
+        for service_id in service_ids:
+            url = '{}/v2/domainTemplates/providers/{}/services/{}' \
+                .format(config.urlAPI, provider_id, service_id)
+
+            try:
+                response = get_http(self._networkContext, url)
+                print('Template for serviceId: {} from {}: {}'.format(service_id, provider_id,
+                                                                      response))
+            except Exception as e:
+                print("Exception when getting config:{}".format(e))
+                return None, 'No template for serviceId: {} from {}'.format(service_id, provider_id)
+
+        return "All OK", None
 
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params=None,
                                              state=None):
@@ -301,9 +306,13 @@ class DomainConnect:
                 return None, "No asynch UX URL in config"
 
             if service_id_in_path:
+                if type(service_id) is list:
+                    return None, "Multiple services are only supported with service_id_in_path=false"
                 async_url_format = '{0}/v2/domainTemplates/providers/{1}/services/{2}' \
                                    '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
             else:
+                if type(service_id) is list:
+                    service_id = ' '.join(service_id)
                 async_url_format = '{0}/v2/domainTemplates/providers/{1}' \
                                    '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
 
@@ -315,7 +324,8 @@ class DomainConnect:
             ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
             ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id,
                                                           config.domain_root, config.host,
-                                                          urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
+                                                          urllib.parse.urlencode(
+                                                              sorted(params.items(), key=lambda val: val[0])))
             return ret, None
         else:
             return None, error
@@ -330,7 +340,7 @@ class DomainConnect:
             return None, "Error when getting starting URL: {}".format(error)
 
         try:
-            print ('Please open URL: {}'.format(async_context.asyncConsentUrl))
+            print('Please open URL: {}'.format(async_context.asyncConsentUrl))
             webbrowser.open_new_tab(async_context.asyncConsentUrl)
             return async_context, None
         except webbrowser.Error as err:
@@ -349,20 +359,21 @@ class DomainConnect:
         # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by
         # a malicious user
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
-                                                                    urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
+                                                                    urllib.parse.urlencode(
+                                                                        sorted(params.items(), key=lambda val: val[0])))
         try:
             # this has to be checked to avoid secret leakage by spoofed "settings" end-point
             if credentials.api_url != context.config.urlAPI:
                 raise Exception("URL API for provider does not match registered one with credentials")
-            data = http_request_json(self._networkContext,
-                                     method='POST',
-                                     content_type='application/json',
-                                     body=json.dumps({
-                                         'client_id': credentials.client_id,
-                                         'client_secret': credentials.client_secret,
-                                     }),
-                                     url=url_get_access_token
-                                     )
+            data, status = http_request_json(self._networkContext,
+                                             method='POST',
+                                             content_type='application/json',
+                                             body=json.dumps({
+                                                 'client_id': credentials.client_id,
+                                                 'client_secret': credentials.client_secret,
+                                             }),
+                                             url=url_get_access_token
+                                             )
         except Exception as ex:
             print('Cannot get async token: {}'.format(ex))
             return None, 'Cannot get async token: {}'.format(ex)
@@ -412,8 +423,12 @@ class DomainConnect:
                                       host, urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
 
         try:
-            http_request_json(self._networkContext, 'POST', url, bearer=context.access_token)
-            return "Success", None
+            res, status = http_request_json(self._networkContext, 'POST', url, bearer=context.access_token,
+                                            accepted_statuses=[200, 202, 409])
+            if status in [409]:
+                return "Conflict", res
+            else:
+                return "Success", None
         except Exception as e:
             return None, 'Error on apply: {}'.format(e)
 
