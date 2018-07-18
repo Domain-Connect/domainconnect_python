@@ -9,10 +9,12 @@ from six.moves import http_client as client
 class NetworkContext:
     proxyHost = None
     proxyPort = None
+    nameservers = None
 
-    def __init__(self, proxy_host=None, proxy_port=None):
+    def __init__(self, proxy_host=None, proxy_port=None, nameservers=None):
         self.proxyPort = proxy_port
         self.proxyHost = proxy_host
+        self.nameservers = nameservers
 
 
 def http_request_json(*args, **kwargs):

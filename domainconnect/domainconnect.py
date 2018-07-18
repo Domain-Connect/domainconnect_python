@@ -10,10 +10,6 @@ import webbrowser
 
 from .network import get_json, get_http, http_request_json, NetworkContext
 
-resolver = Resolver()
-# TODO: support for custom nameservers needed
-# if 'DNS_NAMESERVERS' in app.config:
-#    resolver.nameservers = app.config['DNS_NAMESERVERS'].split(',')
 psl = PublicSuffixList()
 
 
@@ -125,19 +121,21 @@ class DomainConnectAsyncCredentials:
 
 class DomainConnect:
     _networkContext = NetworkContext()
+    _resolver = Resolver()
 
     def __init__(self, networkcontext=NetworkContext()):
         self._networkContext = networkcontext
+        if networkcontext.nameservers is not None:
+            self._resolver.nameservers = networkcontext.nameservers.split(',')
 
     @staticmethod
     def identify_domain_root(domain):
         return psl.get_public_suffix(domain)
 
-    @staticmethod
-    def _identify_domain_connect_api(domain_root):
+    def _identify_domain_connect_api(self, domain_root):
         # noinspection PyBroadException
         try:
-            dns = resolver.query('_domainconnect.{}'.format(domain_root), 'TXT')
+            dns = self._resolver.query('_domainconnect.{}'.format(domain_root), 'TXT')
             domain_connect_api = str(dns[0]).replace('"', '')
             print('Domain Connect API {} for {} found.'.format(domain_connect_api, domain_root))
             return domain_connect_api, None
@@ -233,7 +231,7 @@ class DomainConnect:
         return "All OK", None
 
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params=None,
-                                             state=None):
+                                             state=None, group_ids=None):
         """Makes full Domain Connect discovery of a domain and returns full url to request sync consent.
 
         :param domain: str
@@ -242,11 +240,11 @@ class DomainConnect:
         :param redirect_uri: str
         :param params: dict
         :param state: str
+        :param group_ids: list(str)
         :return: (str, str)
             first field is an url which shall be used to redirect the browser to
             second field is an indication of error
         """
-        # TODO: support for groupIds
         # TODO: support for signatures
         # TODO: support for provider_name (for shared templates)
 
@@ -271,6 +269,8 @@ class DomainConnect:
                 params["redirect_uri"] = redirect_uri
             if state is not None:
                 params["state"] = state
+            if group_ids is not None:
+                params["groupId"] = ",".join(group_ids)
 
             return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host,
                                           urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))), None
@@ -356,8 +356,6 @@ class DomainConnect:
         """
         params = {'code': context.code, 'redirect_uri': context.return_url, 'grant_type': 'authorization_code'}
 
-        # FIXME: context.config.urlAPI shall not be used here, as it may cause client_id/client_secret leakage by
-        # a malicious user
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
                                                                     urllib.parse.urlencode(
                                                                         sorted(params.items(), key=lambda val: val[0])))
@@ -394,7 +392,7 @@ class DomainConnect:
         return context, None
 
     def apply_domain_connect_template_async(self, context, host=None, service_id=None,
-                                            params=None, force=False):
+                                            params=None, force=False, group_ids=None):
         """
 
         :param context: DomainConnectAsyncContext
@@ -402,16 +400,18 @@ class DomainConnect:
         :param service_id:
         :param params:
         :param force:
+        :param group_ids: list(str)
         :return: (str, str)
             If success it's ("Success", None), otherwise (None, error)
         """
-        # TODO: support for groupIds
         if params is None:
             params = {}
         if host is None:
             host = context.config.host
         if service_id is None:
             service_id = context.serviceId
+        if group_ids is not None:
+            params["groupId"] = ",".join(group_ids)
 
         async_url_format = '{}/v2/domainTemplates/providers/{}/services/{}/' \
                            'apply?domain={}&host={}&{}'
