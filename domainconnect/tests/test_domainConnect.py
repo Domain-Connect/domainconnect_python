@@ -1,6 +1,6 @@
 from unittest2 import TestCase
 from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException, \
-    ConflictOnApplyException
+    ConflictOnApplyException, NoDomainConnectRecordException
 # to assure input works like raw_input in python 2
 from builtins import input
 
@@ -37,6 +37,18 @@ configs = [oneandone_config, godaddy_config]
 
 
 class TestDomainConnect(TestCase):
+
+    def test_get_domain_connect_template_sync_url_invalid_domain(self):
+        dc = DomainConnect()
+
+        try:
+            res = dc.get_domain_connect_template_sync_url('sfisdofjsoidhfiosdhif.bike', "exampleservice.domainconnect.org",
+                                                      "template1",
+                                                      params={"IP": "132.148.25.185",
+                                                              "RANDOMTEXT": "shm:1531371203:Hejo"})
+            assert False, "Got URL, where not possible: {}".format(res)
+        except NoDomainConnectRecordException:
+            pass
 
     def test_get_domain_connect_template_sync_url(self):
         for i in configs:
