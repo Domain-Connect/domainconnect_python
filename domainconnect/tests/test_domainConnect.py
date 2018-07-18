@@ -1,5 +1,6 @@
 from unittest2 import TestCase
-from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException
+from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException, \
+    ConflictOnApplyException
 # to assure input works like raw_input in python 2
 from builtins import input
 
@@ -48,36 +49,33 @@ class TestDomainConnect(TestCase):
         dc = DomainConnect()
 
         # simple test sync
-        res, error = dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
-                                                             "template1",
-                                                             params={"IP": "132.148.25.185",
-                                                                     "RANDOMTEXT": "shm:1531371203:Hejo"})
-        assert (error is None), "1. There is an error returned: {}".format(error)
+        res = dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
+                                                      "template1",
+                                                      params={"IP": "132.148.25.185",
+                                                              "RANDOMTEXT": "shm:1531371203:Hejo"})
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN'] + '&host=&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'), \
             "1. URL is different than expected: {}".format(res)
 
         # simple test sync with host
-        res, error = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
-                                                             "exampleservice.domainconnect.org",
-                                                             "template1",
-                                                             params={"IP": "132.148.25.185",
-                                                                     "RANDOMTEXT": "shm:1531371203:Hejo"})
-        assert (error is None), "2. There is an error returned: {}".format(error)
+        res = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
+                                                      "exampleservice.domainconnect.org",
+                                                      "template1",
+                                                      params={"IP": "132.148.25.185",
+                                                              "RANDOMTEXT": "shm:1531371203:Hejo"})
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN'] + '&host=justatest&IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo'), \
             "2. URL is different than expected: {}".format(res)
 
         # simple test sync with host and redirect uri and scope
-        res, error = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
-                                                             "exampleservice.domainconnect.org",
-                                                             "template1",
-                                                             params={"IP": "132.148.25.185",
-                                                                     "RANDOMTEXT": "shm:1531371203:Hejo"},
-                                                             redirect_uri="http://google.com", state="{name=value}")
-        assert (error is None), "3. There is an error returned: {}".format(error)
+        res = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
+                                                      "exampleservice.domainconnect.org",
+                                                      "template1",
+                                                      params={"IP": "132.148.25.185",
+                                                              "RANDOMTEXT": "shm:1531371203:Hejo"},
+                                                      redirect_uri="http://google.com", state="{name=value}")
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN']
@@ -86,13 +84,12 @@ class TestDomainConnect(TestCase):
             "3. URL is different than expected: {}".format(res)
 
         # simple test sync with host and groupids
-        res, error = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
-                                                             "exampleservice.domainconnect.org",
-                                                             "template1",
-                                                             params={"IP": "132.148.25.185",
-                                                                     "RANDOMTEXT": "shm:1531371203:Hejo"},
-                                                             group_ids=['a', 'b'])
-        assert (error is None), "4. There is an error returned: {}".format(error)
+        res = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
+                                                      "exampleservice.domainconnect.org",
+                                                      "template1",
+                                                      params={"IP": "132.148.25.185",
+                                                              "RANDOMTEXT": "shm:1531371203:Hejo"},
+                                                      group_ids=['a', 'b'])
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply?domain='
                 + config['TEST_DOMAIN']
@@ -103,11 +100,10 @@ class TestDomainConnect(TestCase):
         # simple test template does not exist
         try:
             dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
-                                                                 "template_not_exists",
-                                                                 params={"IP": "132.148.25.185",
-                                                                         "RANDOMTEXT": "shm:1531371203:Hejo"})
-            assert (False), "5. There is no error returned and was expected"
-            assert (res is None), "5. There was no url expected and came: {}".format(res)
+                                                    "template_not_exists",
+                                                    params={"IP": "132.148.25.185",
+                                                            "RANDOMTEXT": "shm:1531371203:Hejo"})
+            assert False, "5. There is no error returned and was expected"
         except TemplateNotSupportedException:
             pass
 
@@ -137,12 +133,11 @@ class TestDomainConnect(TestCase):
         dc = DomainConnect()
 
         # simple test sync without host
-        res, error = dc.get_domain_connect_template_async_context(
+        res = dc.get_domain_connect_template_async_context(
             config['TEST_DOMAIN'], "exampleservice.domainconnect.org", "template2",
             params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
             redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response",
             state="{name=value}")
-        assert (error is None), "There is an error returned: {}".format(error)
         assert (res.asyncConsentUrl == config['ASYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org'
                   '?client_id=exampleservice.domainconnect.org&scope=template2&domain='
@@ -153,13 +148,12 @@ class TestDomainConnect(TestCase):
             "URL is different than expected: {}".format(res)
 
         # simple test sync with host
-        res, error = dc.get_domain_connect_template_async_context(
+        res = dc.get_domain_connect_template_async_context(
             "justatest." + config['TEST_DOMAIN'],
             "exampleservice.domainconnect.org", "template2",
             params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
             redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response",
             state="{name=value}")
-        assert (error is None), "There is an error returned"
         assert (res.asyncConsentUrl == config['ASYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org'
                   '?client_id=exampleservice.domainconnect.org&scope=template2&domain='
@@ -176,7 +170,7 @@ class TestDomainConnect(TestCase):
                 "template_not_exists",
                 params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo"},
                 redirect_uri="https://exampleservice.domainconnect.org/async_oauth_response")
-            assert (False), "There is no error returned and was expected"
+            assert False, "There is no error returned and was expected"
         except TemplateNotSupportedException:
             pass
 
@@ -191,26 +185,21 @@ class TestDomainConnect(TestCase):
                   "RANDOMTEXT": "shm:1531371203:Hejo async"}
 
         dc = DomainConnect()
-        context, error = dc.open_domain_connect_template_asynclink(
+        context = dc.open_domain_connect_template_asynclink(
             'asyncpage.' + config['TEST_DOMAIN'],
             'exampleservice.domainconnect.org',
             'template2', params=params,
             redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
             service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
-        assert (error is None), "Error occured: {}".format(error)
-
         code = input("Please enter code: ")
         context.code = code
 
-        ctx, error = dc.get_async_token(context, test_credentials[context.config.providerName])
-        assert (error is None), "Error occured: {}".format(error)
+        ctx = dc.get_async_token(context, test_credentials[context.config.providerName])
         assert (ctx.access_token is not None), 'Access token missing'
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
 
-        res, error = dc.apply_domain_connect_template_async(context, params=params)
-        assert error is None, 'Error on apply: {}'.format(error)
-        assert res == 'Success', 'Wrong result: {}'.format(res)
+        dc.apply_domain_connect_template_async(context, params=params)
 
     def test_get_domain_connect_async_conflict(self):
         for i in configs:
@@ -227,33 +216,28 @@ class TestDomainConnect(TestCase):
         params2 = {"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo async in conflict"}
 
         dc = DomainConnect()
-        context, error = dc.open_domain_connect_template_asynclink(
+        context = dc.open_domain_connect_template_asynclink(
             'asyncpage-conflict.' + config['TEST_DOMAIN'],
             'exampleservice.domainconnect.org',
             ['template1', 'template2'], params=params,
             redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
             service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
-        assert (error is None), "Error occured: {}".format(error)
-
         code = input("Please enter code: ")
         context.code = code
 
-        ctx, error = dc.get_async_token(context, test_credentials[context.config.providerName])
-        assert (error is None), "Error occured: {}".format(error)
+        ctx = dc.get_async_token(context, test_credentials[context.config.providerName])
         assert (ctx.access_token is not None), 'Access token missing'
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
 
-        res, error = dc.apply_domain_connect_template_async(context, service_id='template1', params=params, force=True)
-        assert error is None, '1. Error on apply: {}'.format(error)
-        assert res == 'Success', '1. Wrong result: {}'.format(res)
+        dc.apply_domain_connect_template_async(context, service_id='template1', params=params, force=True)
 
-        res, error = dc.apply_domain_connect_template_async(
-            context, service_id='template2',
-            params=params2)
-        assert error is not None, '2. No error on apply'
-        assert res == 'Conflict', '2. We expected an error, got: {}'.format(res)
+        try:
+            dc.apply_domain_connect_template_async(
+                context, service_id='template2',
+                params=params2)
+            assert False, '2. No error on apply'
+        except ConflictOnApplyException:
+            pass
 
-        res, error = dc.apply_domain_connect_template_async(context, service_id='template2', params=params2, force=True)
-        assert error is None, '3. Error on apply: {}'.format(error)
-        assert res == 'Success', '3. Wrong result: {}'.format(res)
+        dc.apply_domain_connect_template_async(context, service_id='template2', params=params2, force=True)

@@ -14,28 +14,52 @@ psl = PublicSuffixList()
 
 
 class DomainConnectException(Exception):
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
 
 
 class TemplateDoesNotExistException(DomainConnectException):
-    def __init__(self,*args,**kwargs):
-        DomainConnectException.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
 
 class NoDomainConnectRecordException(DomainConnectException):
-    def __init__(self,*args,**kwargs):
-        DomainConnectException.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
 
 class NoDomainConnectSettingsException(DomainConnectException):
-    def __init__(self,*args,**kwargs):
-        DomainConnectException.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
+
+class InvalidDomainConnectSettingsException(DomainConnectException):
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
 
 class TemplateNotSupportedException(DomainConnectException):
-    def __init__(self,*args,**kwargs):
-        DomainConnectException.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
+
+class ConflictOnApplyException(DomainConnectException):
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
+
+class ApplyException(DomainConnectException):
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
+
+class AsyncTokenException(DomainConnectException):
+    def __init__(self, *args, **kwargs):
+        DomainConnectException.__init__(self, *args, **kwargs)
+
 
 class DomainConnectConfig:
-# TODO: implement serialization and deserialization to JSON
+    # TODO: implement serialization and deserialization to JSON
     domain = None
     domain_root = None
     host = None
@@ -163,7 +187,8 @@ class DomainConnect:
             return domain_connect_api
         except Timeout:
             logger.debug('Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
-            raise NoDomainConnectRecordException('Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
+            raise NoDomainConnectRecordException(
+                'Timeout. Failed to find Domain Connect API for "{}"'.format(domain_root))
         except NXDOMAIN or YXDOMAIN:
             logger.debug('Failed to resolve "{}"'.format(domain_root))
             raise NoDomainConnectRecordException('Failed to resolve "{}"'.format(domain_root))
@@ -198,7 +223,7 @@ class DomainConnect:
 
         domain_connect_api = self._identify_domain_connect_api(domain_root)
 
-        ret= self._get_domain_config_for_root(domain_root, domain_connect_api)
+        ret = self._get_domain_config_for_root(domain_root, domain_connect_api)
         return DomainConnectConfig(domain, domain_root, host, ret)
 
     def _get_domain_config_for_root(self, domain_root, domain_connect_api):
@@ -254,8 +279,8 @@ class DomainConnect:
                                                                              response))
             except Exception as e:
                 logger.debug("Exception when getting config:{}".format(e))
-                raise TemplateNotSupportedException('No template for serviceId: {} from {}'.format(service_id, provider_id))
-
+                raise TemplateNotSupportedException(
+                    'No template for serviceId: {} from {}'.format(service_id, provider_id))
 
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params=None,
                                              state=None, group_ids=None):
@@ -275,6 +300,8 @@ class DomainConnect:
             when no _domainconnect record found
         :raises: NoDomainConnectSettingsException
             when settings are not found
+        :raises: InvalidDomainConnectSettingsException
+            when settings contain missing fields
         """
         # TODO: support for signatures
         # TODO: support for provider_name (for shared templates)
@@ -287,7 +314,7 @@ class DomainConnect:
         self.check_template_supported(config, provider_id, service_id)
 
         if config.urlSyncUX is None:
-            return None, "No sync URL in config"
+            raise InvalidDomainConnectSettingsException("No sync URL in config")
 
         sync_url_format = '{}/v2/domainTemplates/providers/{}/services/{}/' \
                           'apply?domain={}&host={}&{}'
@@ -300,7 +327,7 @@ class DomainConnect:
             params["groupId"] = ",".join(group_ids)
 
         return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host,
-                                      urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))), None
+                                      urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
 
     def get_domain_connect_template_async_context(self, domain, provider_id, service_id, redirect_uri, params=None,
                                                   state=None, service_id_in_path=False):
@@ -316,6 +343,16 @@ class DomainConnect:
         :return: (DomainConnectAsyncContext, str)
             asyncConsentUrl field of returned context shall be used to redirect the browser to
             second field is an indication of error
+        :raises: NoDomainConnectRecordException
+            when no _domainconnect record found
+        :raises: NoDomainConnectSettingsException
+            when settings are not found
+        :raises: TemplateNotSupportedException
+            when template is not found
+        :raises: InvalidDomainConnectSettingsException
+            when parts of the settings are missing
+        :raises: DomainConnectException
+            on other domain connect issues
         """
         if params is None:
             params = {}
@@ -325,11 +362,11 @@ class DomainConnect:
         self.check_template_supported(config, provider_id, service_id)
 
         if config.urlAsyncUX is None:
-            return None, "No asynch UX URL in config"
+            raise InvalidDomainConnectSettingsException("No asynch UX URL in config")
 
         if service_id_in_path:
             if type(service_id) is list:
-                return None, "Multiple services are only supported with service_id_in_path=false"
+                raise DomainConnectException("Multiple services are only supported with service_id_in_path=false")
             async_url_format = '{0}/v2/domainTemplates/providers/{1}/services/{2}' \
                                '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
         else:
@@ -348,31 +385,52 @@ class DomainConnect:
                                                       config.domain_root, config.host,
                                                       urllib.parse.urlencode(
                                                           sorted(params.items(), key=lambda val: val[0])))
-        return ret, None
+        return ret
 
     def open_domain_connect_template_asynclink(self, domain, provider_id, service_id, redirect_uri, params=None,
                                                state=None, service_id_in_path=False):
+        """
+
+        :param domain:
+        :param provider_id:
+        :param service_id:
+        :param redirect_uri:
+        :param params:
+        :param state:
+        :param service_id_in_path:
+        :return:
+        :raises: NoDomainConnectRecordException
+            when no _domainconnect record found
+        :raises: NoDomainConnectSettingsException
+            when settings are not found
+        :raises: TemplateNotSupportedException
+            when template is not found
+        :raises: InvalidDomainConnectSettingsException
+            when parts of the settings are missing
+        :raises: DomainConnectException
+            on other domain connect issues
+
+        """
         if params is None:
             params = {}
-        async_context, error = self.get_domain_connect_template_async_context(
+        async_context = self.get_domain_connect_template_async_context(
             domain, provider_id, service_id, redirect_uri, params, state, service_id_in_path)
-        if error:
-            return None, "Error when getting starting URL: {}".format(error)
 
         try:
             print('Please open URL: {}'.format(async_context.asyncConsentUrl))
             webbrowser.open_new_tab(async_context.asyncConsentUrl)
-            return async_context, None
+            return async_context
         except webbrowser.Error as err:
-            return None, "Error opening browser window: {}".format(err)
+            raise Exception("Error opening browser window: {}".format(err))
 
     def get_async_token(self, context, credentials):
         """Gets access_token in async process
 
         :param context: DomainConnectAsyncContext
         :param credentials: DomainConnectAsyncCredentials
-        :return: (DomainConnectAsyncContext, str)
-            (context enriched with access_token and refresh_token if existing, error)
+        :return: DomainConnectAsyncContext
+            context enriched with access_token and refresh_token if existing
+        :raises: AsyncTokenException
         """
         params = {'code': context.code, 'redirect_uri': context.return_url, 'grant_type': 'authorization_code'}
 
@@ -382,7 +440,7 @@ class DomainConnect:
         try:
             # this has to be checked to avoid secret leakage by spoofed "settings" end-point
             if credentials.api_url != context.config.urlAPI:
-                raise Exception("URL API for provider does not match registered one with credentials")
+                raise AsyncTokenException("URL API for provider does not match registered one with credentials")
             data, status = http_request_json(self._networkContext,
                                              method='POST',
                                              content_type='application/json',
@@ -394,14 +452,14 @@ class DomainConnect:
                                              )
         except Exception as ex:
             logger.debug('Cannot get async token: {}'.format(ex))
-            return None, 'Cannot get async token: {}'.format(ex)
+            raise AsyncTokenException('Cannot get async token: {}'.format(ex))
 
         if 'access_token' not in data \
                 or 'expires_in' not in data \
                 or 'token_type' not in data \
                 or data['token_type'].lower() != 'bearer':
             logger.debug('Token not complete: {}'.format(data))
-            return None, 'Token not complete: {}'.format(data)
+            raise AsyncTokenException('Token not complete: {}'.format(data))
 
         context.access_token = data['access_token']
         context.access_token_expires_in = data['expires_in']
@@ -409,7 +467,7 @@ class DomainConnect:
         if 'refresh_token' in data:
             context.refresh_token = data['refresh_token']
 
-        return context, None
+        return context
 
     def apply_domain_connect_template_async(self, context, host=None, service_id=None,
                                             params=None, force=False, group_ids=None):
@@ -423,8 +481,11 @@ class DomainConnect:
         :param params:
         :param force:
         :param group_ids: list(str)
-        :return: (str, str)
-            If success it's ("Success", None), otherwise (None, error)
+        :return: None
+        :raises: ConflictOnApply
+            Conflict situation
+        :raises: ApplyException
+            Other errors in apply operation
         """
         if params is None:
             params = {}
@@ -448,10 +509,10 @@ class DomainConnect:
             res, status = http_request_json(self._networkContext, 'POST', url, bearer=context.access_token,
                                             accepted_statuses=[200, 202, 409])
             if status in [409]:
-                return "Conflict", res
-            else:
-                return "Success", None
+                raise ConflictOnApplyException("Conflict: {}".format(res))
+        except ConflictOnApplyException:
+            raise
         except Exception as e:
-            return None, 'Error on apply: {}'.format(e)
+            raise ApplyException('Error on apply: {}'.format(e))
 
     # TODO: implement revert
