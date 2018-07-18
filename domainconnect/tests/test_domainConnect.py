@@ -239,6 +239,6 @@ class TestDomainConnect(TestCase):
         assert error is not None, '2. No error on apply'
         assert res == 'Conflict', '2. We expected an error, got: {}'.format(res)
 
-        res, error = dc.apply_domain_connect_template_async(context, service_id='template1', params=params, force=True)
+        res, error = dc.apply_domain_connect_template_async(context, service_id='template2', params=params, force=True)
         assert error is None, '3. Error on apply: {}'.format(error)
         assert res == 'Success', '3. Wrong result: {}'.format(res)
