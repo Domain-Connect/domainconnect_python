@@ -208,8 +208,8 @@ class TestDomainConnect(TestCase):
             print("Skipping test as service in path does not support multiple templates in consent: {}".format(config))
             return
 
-        params = {"IP": "132.148.25.184",
-                  "RANDOMTEXT": "shm:1531371203:Hejo async"}
+        params = {"IP": "132.148.25.184", "RANDOMTEXT": "shm:1531371203:Hejo async"}
+        params2 = {"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo async in conflict"}
 
         dc = DomainConnect()
         context, error = dc.open_domain_connect_template_asynclink(
@@ -235,10 +235,10 @@ class TestDomainConnect(TestCase):
 
         res, error = dc.apply_domain_connect_template_async(
             context, service_id='template2',
-            params={"IP": "132.148.25.185", "RANDOMTEXT": "shm:1531371203:Hejo async in conflict"})
+            params=params2)
         assert error is not None, '2. No error on apply'
         assert res == 'Conflict', '2. We expected an error, got: {}'.format(res)
 
-        res, error = dc.apply_domain_connect_template_async(context, service_id='template2', params=params, force=True)
+        res, error = dc.apply_domain_connect_template_async(context, service_id='template2', params=params2, force=True)
         assert error is None, '3. Error on apply: {}'.format(error)
         assert res == 'Success', '3. Wrong result: {}'.format(res)
