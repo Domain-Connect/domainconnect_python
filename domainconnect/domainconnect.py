@@ -380,7 +380,7 @@ class DomainConnect:
                                '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
         else:
             if type(service_id) is list:
-                service_id = ' '.join(service_id)
+                service_id = '+'.join(service_id)
             async_url_format = '{0}/v2/domainTemplates/providers/{1}' \
                                '?client_id={1}&scope={2}&domain={3}&host={4}&{5}'
 
@@ -390,7 +390,7 @@ class DomainConnect:
             params["state"] = state
 
         ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
-        ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, urllib.parse.urlencode(service_id),
+        ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id,
                                                       config.domain_root, config.host,
                                                       urllib.parse.urlencode(
                                                           sorted(params.items(), key=lambda val: val[0])))
