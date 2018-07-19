@@ -390,7 +390,7 @@ class DomainConnect:
             params["state"] = state
 
         ret = DomainConnectAsyncContext(config, provider_id, service_id, redirect_uri, params)
-        ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, service_id,
+        ret.asyncConsentUrl = async_url_format.format(config.urlAsyncUX, provider_id, urllib.parse.urlencode(service_id),
                                                       config.domain_root, config.host,
                                                       urllib.parse.urlencode(
                                                           sorted(params.items(), key=lambda val: val[0])))
