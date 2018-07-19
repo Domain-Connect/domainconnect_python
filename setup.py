@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
-setup(name='Domain Connect',
-      version='0.1',
-      description='Python client library for Domain Connect protocol',
+setup(name='domain_connect',
+      version='0.0.1',
+      description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       author='Pawel Kowalik',
       author_email='pawel-kow@users.noreply.github.com',
       url='https://github.com/pawel-kow/domainconnect_python',
