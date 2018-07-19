@@ -70,8 +70,9 @@ class TestDomainConnect(TestCase):
         dc = DomainConnect()
 
         # simple test sync
-        res = dc.get_domain_connect_template_sync_url(config['TEST_DOMAIN'], "exampleservice.domainconnect.org",
-                                                      "template1",
+        res = dc.get_domain_connect_template_sync_url(domain=config['TEST_DOMAIN'],
+                                                      provider_id="exampleservice.domainconnect.org",
+                                                      service_id="template1",
                                                       params={"IP": "132.148.25.185",
                                                               "RANDOMTEXT": "shm:1531371203:Hejo"})
         assert (res == config['SYNC_URL']
@@ -91,9 +92,9 @@ class TestDomainConnect(TestCase):
             "2. URL is different than expected: {}".format(res)
 
         # simple test sync with host and redirect uri and scope
-        res = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
-                                                      "exampleservice.domainconnect.org",
-                                                      "template1",
+        res = dc.get_domain_connect_template_sync_url(domain="justatest." + config['TEST_DOMAIN'],
+                                                      provider_id="exampleservice.domainconnect.org",
+                                                      service_id="template1",
                                                       params={"IP": "132.148.25.185",
                                                               "RANDOMTEXT": "shm:1531371203:Hejo"},
                                                       redirect_uri="http://google.com", state="{name=value}")
@@ -238,9 +239,9 @@ class TestDomainConnect(TestCase):
 
         dc = DomainConnect()
         context = dc.open_domain_connect_template_asynclink(
-            'asyncpage-conflict.' + config['TEST_DOMAIN'],
-            'exampleservice.domainconnect.org',
-            ['template1', 'template2'], params=params,
+            domain='asyncpage-conflict.' + config['TEST_DOMAIN'],
+            provider_id='exampleservice.domainconnect.org',
+            service_ids=['template1', 'template2'], params=params,
             redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
             service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
