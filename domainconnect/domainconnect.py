@@ -447,6 +447,9 @@ class DomainConnect:
             now = int(time.time()) + 60
             if now > context.iat + context.access_token_expires_in:
                 params = {'refresh_token': context.refresh_token, 'grant_type': 'refresh_token'}
+            else:
+                logger.debug('Context has a valid access token')
+                return context
         params['redirect_uri'] = context.return_url
 
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
