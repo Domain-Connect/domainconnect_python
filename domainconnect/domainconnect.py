@@ -9,6 +9,7 @@ __status__ = "Beta"
 
 import logging
 import json
+import time
 from six.moves import urllib
 from dns.exception import Timeout
 from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
@@ -441,7 +442,12 @@ class DomainConnect:
             context enriched with access_token and refresh_token if existing
         :raises: AsyncTokenException
         """
-        params = {'code': context.code, 'redirect_uri': context.return_url, 'grant_type': 'authorization_code'}
+        params = {'code': context.code, 'grant_type': 'authorization_code'}
+        if 'iat' in context and 'access_token_expires_in' in context and 'refresh_token' in context:
+            now = int(time.time()) + 60
+            if now > context.iat + context.access_token_expires_in:
+                params = {'refresh_token': context.refresh_token, 'grant_type': 'refresh_token'}
+        params['redirect_uri'] = context.return_url
 
         url_get_access_token = '{}/v2/oauth/access_token?{}'.format(context.config.urlAPI,
                                                                     urllib.parse.urlencode(
@@ -472,6 +478,7 @@ class DomainConnect:
 
         context.access_token = data['access_token']
         context.access_token_expires_in = data['expires_in']
+        context.iat = int(time.time())
 
         if 'refresh_token' in data:
             context.refresh_token = data['refresh_token']
@@ -480,8 +487,6 @@ class DomainConnect:
 
     def apply_domain_connect_template_async(self, context, host=None, service_id=None,
                                             params=None, force=False, group_ids=None):
-        # TODO: implement check of access_token validity and refresh
-
         """
 
         :param context: DomainConnectAsyncContext
