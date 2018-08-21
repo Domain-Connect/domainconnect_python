@@ -443,7 +443,8 @@ class DomainConnect:
         :raises: AsyncTokenException
         """
         params = {'code': context.code, 'grant_type': 'authorization_code'}
-        if 'iat' in context and 'access_token_expires_in' in context and 'refresh_token' in context:
+        if getattr(context, 'iat', None) and getattr(context, 'access_token_expires_in', None) and \
+                getattr(context, 'refresh_token', None):
             now = int(time.time()) + 60
             if now > context.iat + context.access_token_expires_in:
                 params = {'refresh_token': context.refresh_token, 'grant_type': 'refresh_token'}
