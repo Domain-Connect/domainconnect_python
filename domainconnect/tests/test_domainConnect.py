@@ -26,7 +26,7 @@ oneandone_config = \
 godaddy_config = \
     dict(
         PROVIDER_ID='GoDaddy',
-        TEST_DOMAIN='cuco240714it.today',
+        TEST_DOMAIN='weathernyc.nyc',
         SYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_SERVICE_IN_PATH=True,
@@ -241,7 +241,7 @@ class TestDomainConnect(TestCase):
         context = dc.open_domain_connect_template_asynclink(
             domain='asyncpage-conflict.' + config['TEST_DOMAIN'],
             provider_id='exampleservice.domainconnect.org',
-            service_ids=['template1', 'template2'], params=params,
+            service_id=['template1', 'template2'], params=params,
             redirect_uri='https://exampleservice.domainconnect.org/async_oauth_response',
             service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
 
