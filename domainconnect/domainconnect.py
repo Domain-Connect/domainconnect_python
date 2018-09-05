@@ -135,6 +135,8 @@ class DomainConnectAsyncContext:
     """ :type: str """
     access_token_expires_in = None
     """ :type: int """
+    iat = None
+    """ :type: int """
 
     def __init__(self, config, provider_id, service_id, return_url, params):
         """Initiates the object

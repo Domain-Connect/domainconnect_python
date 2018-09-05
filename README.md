@@ -113,5 +113,4 @@ dc = DomainConnect(
 - serialization and deserialization of context for easy storage 
 - support for signatures
 - support for provider_name (for shared templates)
-- check of async access_token validity and refresh
 - async revert
