@@ -41,7 +41,6 @@ test_credentials = {
                                              client_secret='DomainConnectGeheimnisSecretString',
                                              api_url=godaddy_config['API_URL']),
 }
-
 configs = [oneandone_config, godaddy_config]
 
 
@@ -220,8 +219,45 @@ class TestDomainConnect(TestCase):
         ctx = dc.get_async_token(context, test_credentials[context.config.providerName])
         assert (ctx.access_token is not None), 'Access token missing'
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
+        assert (ctx.iat is not None), 'Access token iat missing'
 
         dc.apply_domain_connect_template_async(context, params=params)
+
+    def test_get_domain_connect_async_token_refresh(self):
+        dc = DomainConnect()
+        for i in configs:
+            with self.subTest(i=i):
+                TestDomainConnect._test_get_domain_connect_async_token_refresh(i)
+
+    @staticmethod
+    def _test_get_domain_connect_async_token_refresh(config):
+        params = {"IP": "132.148.25.185"}
+
+        dc = DomainConnect()
+        # use of DynDNS to always have refresh_token onboarded
+        context = dc.open_domain_connect_template_asynclink(
+            'asyncpage.' + config['TEST_DOMAIN'],
+            'domainconnect.org',
+            'dynamicdns', params=params,
+            redirect_uri='https://dynamicdns.domainconnect.org/ddnscode',
+            service_id_in_path=config['ASYNC_SERVICE_IN_PATH'])
+
+        code = input("Please enter code: ")
+        context.code = code
+
+        # for DYNDNS there are static credentials
+        credentials = DomainConnectAsyncCredentials(client_id='domainconnect.org',
+                                           client_secret='inconceivable',
+                                           api_url=context.config.urlAPI)
+        ctx = dc.get_async_token(context, credentials)
+        initial_token = ctx.access_token
+        assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
+        assert (ctx.iat is not None), 'Access token iat missing'
+        assert (ctx.refresh_token is not None), 'Refresh token missing'
+        ctx.access_token_expires_in = 1
+
+        ctx = dc.get_async_token(ctx, credentials)
+        assert (initial_token != ctx.access_token), "Token not refreshed when expired"
 
     def test_get_domain_connect_async_conflict(self):
         for i in configs:
