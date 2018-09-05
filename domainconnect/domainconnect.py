@@ -449,7 +449,9 @@ class DomainConnect:
                 getattr(context, 'refresh_token', None):
             now = int(time.time()) + 60
             if now > context.iat + context.access_token_expires_in:
-                params = {'refresh_token': context.refresh_token, 'grant_type': 'refresh_token'}
+                params = {'refresh_token': context.refresh_token, 'grant_type': 'refresh_token',
+                          'client_id': credentials.client_id, 'client_secret': credentials.client_secret
+                }
             else:
                 logger.debug('Context has a valid access token')
                 return context

@@ -41,7 +41,6 @@ test_credentials = {
                                              client_secret='DomainConnectGeheimnisSecretString',
                                              api_url=godaddy_config['API_URL']),
 }
-
 configs = [oneandone_config, godaddy_config]
 
 
@@ -235,6 +234,7 @@ class TestDomainConnect(TestCase):
         params = {"IP": "132.148.25.185"}
 
         dc = DomainConnect()
+        # use of DynDNS to always have refresh_token onboarded
         context = dc.open_domain_connect_template_asynclink(
             'asyncpage.' + config['TEST_DOMAIN'],
             'domainconnect.org',
@@ -245,14 +245,18 @@ class TestDomainConnect(TestCase):
         code = input("Please enter code: ")
         context.code = code
 
-        ctx = dc.get_async_token(context, test_credentials[context.config.providerName])
+        # for DYNDNS there are static credentials
+        credentials = DomainConnectAsyncCredentials(client_id='domainconnect.org',
+                                           client_secret='inconceivable',
+                                           api_url=context.config.urlAPI)
+        ctx = dc.get_async_token(context, credentials)
         initial_token = ctx.access_token
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
         assert (ctx.iat is not None), 'Access token iat missing'
         assert (ctx.refresh_token is not None), 'Refresh token missing'
         ctx.access_token_expires_in = 1
 
-        ctx = dc.get_async_token(ctx, test_credentials[context.config.providerName])
+        ctx = dc.get_async_token(ctx, credentials)
         assert (initial_token != ctx.access_token), "Token not refreshed when expired"
 
     def test_get_domain_connect_async_conflict(self):
