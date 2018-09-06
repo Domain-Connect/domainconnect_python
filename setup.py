@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='domain_connect',
-      version='0.0.3',
+      version='0.0.4',
       description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       long_description_content_type="text/markdown",
       long_description=open('README.md').read(),
@@ -17,14 +17,12 @@ setup(name='domain_connect',
       ],
       packages=[
           'domainconnect',
-          'domainconnect.tests',
       ],
       install_requires=[
           'dnspython >= 1.15.0',
           'publicsuffix >= 1.1.0',
           'publicsuffixlist >= 0.6.1',
           'six >= 1.11.0',
-          'unittest2 >= 1.1.0',
           'future >= 0.16.0',
       ],
       )
