@@ -42,6 +42,8 @@ https://domainconnect.1and1.com/sync/v2/domainTemplates/providers/exampleservice
 ### Async flow
 ```python
 from domainconnect import *
+# to assure input works like raw_input in python 2
+from builtins import input
 
 # this will be normally a secret local store on the server
 credentials = {
