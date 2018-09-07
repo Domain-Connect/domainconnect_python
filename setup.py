@@ -3,14 +3,14 @@
 from setuptools import setup
 
 setup(name='domain_connect',
-      version='0.0.4',
+      version='0.0.5',
       description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       long_description_content_type="text/markdown",
       long_description=open('README.md').read(),
       author='Pawel Kowalik',
       author_email='pawel-kow@users.noreply.github.com',
-      url='https://github.com/pawel-kow/domainconnect_python',
-      license='https://github.com/pawel-kow/domainconnect_python/blob/master/LICENSE',
+      url='https://github.com/Domain-Connect/domainconnect_python',
+      license='https://github.com/Domain-Connect/domainconnect_python/blob/master/LICENSE',
       classifiers=[
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.6',
