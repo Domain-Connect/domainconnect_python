@@ -77,7 +77,7 @@ class TestDomainConnect(TestCase):
         assert (res == config['SYNC_URL']
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template1/apply'
                   '?IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo&domain='
-                + config['TEST_DOMAIN'] + '&host='), \
+                + config['TEST_DOMAIN']), \
             "1. URL is different than expected: {}".format(res)
 
 
@@ -152,9 +152,18 @@ class TestDomainConnect(TestCase):
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template2/apply'
                   '?IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo&domain='
                 + config['TEST_DOMAIN']
-                + '&host='
-                + '&sig=liU8sl6t%2Bl8YmwVG1mvJPN18wxJ9z448%2FGd4LymL6MTOEBsVSZ1qHuVR0m1km9R4H8vsB%2B89suxIBXCmsQNK34hrBe4NeNWxCh3kbF9cWFFMZKk94HYcPcWUkip0UYcJzI5WMAVqhHulnWAi8yJj%2FqfoNhsVskUdKlx8ng3gIxLsiZxKcFUVgoYnBxg2v92QLEHKcs9OBoT%2FRUkfpeQTxQOAxukQ2SXDy4lOiTQnUr7rHZ2cJElDK60dY1tLebVtbeL1JduEwtgAPyqZ9gmHzl%2B50QK%2Fm%2BA6r95VaSPWyxbS3n3s6xF3Z1PYgmEHOxECh5jT5yb9zXGrKcpkjlQkog%3D%3D&key=_dck1'), \
+                + '&sig=E8lWecXOM7s4SwLp6bNhivmvqV47wynek6rO13iUIbC095p9WR5VnCY%2Fg8aUhazmM3squI0lr1wz5REiUIHVX5AP3reFbU6bLIzckgWoN9%2F3VgxtS9q%2FEgO8HL9%2FbTGjUodf9eI7afWXR348C8ekQFZeT%2F7SHMn7VvM%2BEpLA7ZDIq4kROJXE2eIOI21j6nkE4luWn2vWYdK%2BvUnp4YTzot03uj6cQ5nkpEziCJK5hqMqhZP5%2F755RLI3bH%2BpMvegFE2ualUM6BsvNJ4kyYNf250NyafLZU1RbkeUD1SM4KaUU59IY1PEKI44I21%2BfCPN8kAMFmTJqpNHLNffixNlgA%3D%3D&key=_dck1'), \
             "URL is different than expected: {}".format(res)
+
+    def test_generate_sig_params(self):
+        priv_key = '-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA18SgvpmeasN4BHkkv0SBjAzIc4grYLjiAXRtNiBUiGUDMeTzQrKTsWvy9NuxU1dIHCZy9o1CrKNg5EzLIZLNyMfI6qiXnM+HMd4byp97zs/3D39Q8iR5poubQcRaGozWx8yQpG0OcVdmEVcTfyR/XSEWC5u16EBNvRnNAOAvZYUdWqVyQvXsjnxQot8KcK0QP8iHpoL/1dbdRy2opRPQ2FdZpovUgknybq/6FkeDtW7uCQ6Mvu4QxcUa3+WP9nYHKtgWip/eFxpeb+qLvcLHf1h0JXtxLVdyy6OLk3f2JRYUX2ZZVDvG3biTpeJz6iRzjGg6MfGxXZHjI8weDjXrJwIDAQABAoIBAGiPedJDwXg9d1i7mCo0OY8z1qPeFh9OGP/Zet8i9bQPN2gjahslTNtK07cDC8C2aFRz8Xw3Ylsk5VxdNobzjFPDNUM6JhawnvR0jQU5GhdTwoc5DHH7aRRjTP6m938sRx0VrfZwfvJAB09Z4jHX7vyjfvprH9EH8GQ2L5lACtfnsSASVJB77H1vtgxTnum74CSqIck1MCjPD/TVUtYfMJwkUQWcbk79N4nvnEoagqsDrvw4okU2OYMWucQjyxfWTU4NGlsDScRbdDAb8sLr3DpMfXM8vpZJ3Ed6gfw14hEJym8XoHwDHmjGmgYH9iG6MODxuO5TLRmRR6b+jcUV/2kCgYEA4WGsDUO/NIXIqtDm5lTi5qeFl0sGKIgRLGuCrvjLF0Fq5Yx28wuow3OhZ3rbjlmhf9nUt24nUUY67plv2pi+vx3kVdbcNfk+Wkc0wfx8+U91qaTplMRhNjrnq/Kp9E7xtnzZRInpUG1Ha5ozTYobVvklUvjodFlF2c16Zz2X2AMCgYEA9RSeZm7oMyJbe985SScXruwt5ZXlUBoBLDZAeMloPpaqknFmSVSNgtniywztF8HppJQyiMvmUOUL2tKnuShXwsvTkCTBC/vNGXutiPS8O2yqeQ8dHoHuKcoMFwgajrbPrVkuFtUkjbQJ/TKoZtrxUdCryDZ/AHmRtiHh9E4NUQ0CgYAE7ngvSh4y7gJ4Cl4jCBR26492wgN+e4u0px2S6oq3FY1bPHmV09l7fVo4w21ubfOksoV/BgACPUEo216hL9psoCDQ6ASlgbCllQ1IeVfatKxka+FYift+jkdnccXaPKf5UD4Iy+O5CMsZRaR9u9nhS05PxHaBpTpsC5z0CVr7NQKBgQCsBTzpSQ9SVNtBpvzei8Hj1YKhkwTRpG8OSUYXgcbZp4cyIsZY0jBBmA3H19rSwhjsm9icjAGs5hfcD+AJ5nczEz37/tBBSQw8xsKXTrCQRUWikyktMKWqT1cNE3MQmOBMHDxtak2t6KDaR6RMDYE0m/L3JMkf3DSaUk323JIcQQKBgD6lHhw79Cenpezzf0566uWE1QF6Sv3kWk6Gkzo2jUGmjo2tG1v2Nj82DvcTuqvfUKSr2wTKINxnKGyYXGto0BykdxeFbR04cNcBB46zUjasro2ZCvIoAHCpohNBI2dL6dI+RI3jC/KY3jPNI0toaOTWkeAvJ7w09G2ttlv8qLNV\n-----END RSA PRIVATE KEY-----'
+        querystring = 'domain=connect.domains&RANDOMTEXT=shm%3A1552462554%3AHola&IP=132.148.25.185'
+
+        sigparams = DomainConnect._generate_sig_params(querystring, priv_key, '_dck1')
+
+        assert (sigparams == '&sig=pDgKCqDX%2BYafD8fqchYjayZt6bgf5ncz%2FJlYVGV0SbZrcUPb5tgMyqpn4g%2BlY%2FigpgKYFhkXGcAeNOrQ0aiTu31bLo7ODkK2fWsdz4G%2BpSa5Lkb7NhwS07o6cpQMcvO8aihA7pU5%2BIbPd3Im1ncUNol3zfjeyAl%2BaBkfcXOAl2xnWY8NobMzaI0jqVwPnWperRj5VGfX6vu5mPviDFzcS0RvruRAHv08X8zDp%2BBvCnpk4L1cWn49%2FZceS8Hifo7%2FkVd4j%2BdFGvze7H4cGZ2Kx6ZrSShW3a7AwvV6cVGxqn%2FdQlpYYsHBHlv9Zbhe2pKuqpAhB%2FxDN2G%2FjQaDqmcWGw%3D%3D&key=_dck1'), \
+            "Generated signature parameters differ"
+
 
 
     def test_get_domain_config(self):

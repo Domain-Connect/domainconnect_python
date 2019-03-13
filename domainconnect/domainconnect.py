@@ -278,6 +278,18 @@ class DomainConnect:
 
         return b64encode(signer.sign(digest)).decode('ascii')
 
+    @staticmethod
+    def _generate_sig_params(queryparams, private_key=None, keyid=None):
+        if private_key is None or keyid is None:
+            raise InvalidDomainConnectSettingsException("Private key and/or key ID not provided for signing")
+        signature = DomainConnect._generate_sig(private_key, queryparams)
+        return '&' + urllib.parse.urlencode(
+            {
+                "sig": signature,
+                "key": keyid,
+            }
+        )
+
     def check_template_supported(self, config, provider_id, service_ids):
         """
 
@@ -350,7 +362,8 @@ class DomainConnect:
                           'apply?{}{}'
 
         params['domain'] = config.domain_root
-        params['host'] = config.host
+        if config.host is not None and config.host != '':
+            params['host'] = config.host
         if redirect_uri is not None:
             params["redirect_uri"] = redirect_uri
         if state is not None:
@@ -359,19 +372,7 @@ class DomainConnect:
             params["groupId"] = ",".join(group_ids)
 
         queryparams = urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))
-
-        if sign:
-            if private_key is None or keyid is None:
-                raise InvalidDomainConnectSettingsException("Private key and/or key ID not provided for signing")
-            signature = DomainConnect._generate_sig(private_key, queryparams)
-            sigparams = '&' + urllib.parse.urlencode(
-                {
-                    "sig": signature,
-                    "key": keyid,
-                }
-            )
-        else:
-            sigparams = ""
+        sigparams = DomainConnect._generate_sig_params(queryparams, private_key, keyid) if sign else ''
 
         return sync_url_format.format(config.urlSyncUX, provider_id, service_id, queryparams, sigparams)
 
