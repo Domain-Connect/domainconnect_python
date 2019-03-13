@@ -16,6 +16,10 @@ from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 from publicsuffix import PublicSuffixList
 import webbrowser
 from .network import get_json, get_http, http_request_json, NetworkContext
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA256
+from base64 import b64encode
 
 logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
 logger = logging.getLogger(__name__)
@@ -263,6 +267,29 @@ class DomainConnect:
         logger.debug('No Domain Connect config found for {}.'.format(domain_root))
         raise NoDomainConnectSettingsException('No Domain Connect config found for {}.'.format(domain_root))
 
+    # Generates a signature on the passed in data
+    @staticmethod
+    def _generate_sig(private_key, data):
+
+        rsakey = RSA.importKey(private_key)
+        signer = PKCS1_v1_5.new(rsakey)
+        digest = SHA256.new()
+        digest.update(data)
+
+        return b64encode(signer.sign(digest)).decode('ascii')
+
+    @staticmethod
+    def _generate_sig_params(queryparams, private_key=None, keyid=None):
+        if private_key is None or keyid is None:
+            raise InvalidDomainConnectSettingsException("Private key and/or key ID not provided for signing")
+        signature = DomainConnect._generate_sig(private_key, queryparams)
+        return '&' + urllib.parse.urlencode(
+            {
+                "sig": signature,
+                "key": keyid,
+            }
+        )
+
     def check_template_supported(self, config, provider_id, service_ids):
         """
 
@@ -294,8 +321,9 @@ class DomainConnect:
                 raise TemplateNotSupportedException(
                     'No template for serviceId: {} from {}'.format(service_id, provider_id))
 
+
     def get_domain_connect_template_sync_url(self, domain, provider_id, service_id, redirect_uri=None, params=None,
-                                             state=None, group_ids=None):
+                                             state=None, group_ids=None, sign=False, private_key=None, keyid=None):
         """Makes full Domain Connect discovery of a domain and returns full url to request sync consent.
 
         :param domain: str
@@ -305,6 +333,9 @@ class DomainConnect:
         :param params: dict
         :param state: str
         :param group_ids: list(str)
+        :param sign: bool
+        :param private_key: str - RSA key in PEM format
+        :param keyid: str - host name of the TXT record with public KEY (appended to syncPubKeyDomain)
         :return: (str, str)
             first field is an url which shall be used to redirect the browser to
             second field is an indication of error
@@ -315,7 +346,6 @@ class DomainConnect:
         :raises: InvalidDomainConnectSettingsException
             when settings contain missing fields
         """
-        # TODO: support for signatures
         # TODO: support for provider_name (for shared templates)
 
         if params is None:
@@ -329,8 +359,11 @@ class DomainConnect:
             raise InvalidDomainConnectSettingsException("No sync URL in config")
 
         sync_url_format = '{}/v2/domainTemplates/providers/{}/services/{}/' \
-                          'apply?domain={}&host={}&{}'
+                          'apply?{}{}'
 
+        params['domain'] = config.domain_root
+        if config.host is not None and config.host != '':
+            params['host'] = config.host
         if redirect_uri is not None:
             params["redirect_uri"] = redirect_uri
         if state is not None:
@@ -338,8 +371,10 @@ class DomainConnect:
         if group_ids is not None:
             params["groupId"] = ",".join(group_ids)
 
-        return sync_url_format.format(config.urlSyncUX, provider_id, service_id, config.domain_root, config.host,
-                                      urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0])))
+        queryparams = urllib.parse.urlencode(sorted(params.items(), key=lambda val: val[0]))
+        sigparams = DomainConnect._generate_sig_params(queryparams, private_key, keyid) if sign else ''
+
+        return sync_url_format.format(config.urlSyncUX, provider_id, service_id, queryparams, sigparams)
 
     def get_domain_connect_template_async_context(self, domain, provider_id, service_id, redirect_uri, params=None,
                                                   state=None, service_id_in_path=False):
