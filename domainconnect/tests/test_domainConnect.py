@@ -41,7 +41,10 @@ test_credentials = {
                                              client_secret='DomainConnectGeheimnisSecretString',
                                              api_url=godaddy_config['API_URL']),
 }
-configs = [oneandone_config, godaddy_config]
+configs = [
+    oneandone_config,
+    godaddy_config
+]
 
 
 class TestDomainConnect(TestCase):

@@ -16,10 +16,13 @@ from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 from publicsuffix import PublicSuffixList
 import webbrowser
 from .network import get_json, get_http, http_request_json, NetworkContext
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
-from Crypto.Hash import SHA256
-from base64 import b64encode
+
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+
+from base64 import b64decode, b64encode
 
 logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
 logger = logging.getLogger(__name__)
@@ -270,13 +273,19 @@ class DomainConnect:
     # Generates a signature on the passed in data
     @staticmethod
     def _generate_sig(private_key, data):
+        pk = serialization.load_pem_private_key(
+            private_key.encode(),
+            password=None,
+            backend=default_backend()
+        )
 
-        rsakey = RSA.importKey(private_key)
-        signer = PKCS1_v1_5.new(rsakey)
-        digest = SHA256.new()
-        digest.update(data)
+        sig = pk.sign(
+            data.encode(),
+            padding.PKCS1v15(),
+            hashes.SHA256()
+        )
 
-        return b64encode(signer.sign(digest)).decode('ascii')
+        return b64encode(sig)
 
     @staticmethod
     def _generate_sig_params(queryparams, private_key=None, keyid=None):
