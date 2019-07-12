@@ -2,9 +2,13 @@ dist: xenial
 language: python
 python:
 - '3.7'
+# command to run tests
+script:
+  - pytest
 deploy:
   provider: pypi
   user: domain-connect
+  distributions: "sdist bdist_wheel"
   password:
     secure: uVLBjD7meehPbk3DsSKYsYzUgboMV9ZhH0yGGvvs8jeFLkoa2iLRLmP7HFWZ/l7xGK1aMCeSR/3/Kzvu5BdpJBML+wq+Jy9ME0Nj23ZjuuITNH4PUJ/tKOumi6dbMqqls0dFuuryNrgtAmlmZLimD2YRg2upBMnbbnEMHZ7PXiDgRE0OrvRTVNmO1r6iuCqBM3O70zJthOH15+C1HogAZH5BzbTX6uN67dbw2dqQUvDCZydKmtbdE5zlzXHLfab0xx3UjwfDpANXojF64swmEiZmaXcU2E9B2WSR0sfkejUxTAsampJ32RwrN7x5DPRZaQxiVh2XFNtON1jVyf08VbQlOijYn5aSo1vFPldbmcll8kVK9vhdQGjWCXQNhQ+IGIuTtSIHXYYuolKFizWUU1MfrAKIEaEXG5tUn+t5jIJnvZS/k1W011bMiFnKorBa1QJaUL1szQsmYrPNsenbYxbD+lqgGx5J94J9P+umiHwlyETHDAPF2/YFjbZOAKzD7wqMw2nN4aBAN+YSAgtNINtccZtmOQJrBmDA11q70CvBmBxLrijCWn3MF8f0z6Y8a1Q19VM6cjh7yyoRxkW5FTNyXvn4IFWQvCOY6YCMAyE4EV+5We6rvBiPua+DIKPXrEgQTOIH6g4J9Pyoc3BPrQ2BARx0KAldLM1Jk4VTo60=
   on:
