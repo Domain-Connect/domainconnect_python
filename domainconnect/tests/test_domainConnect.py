@@ -7,11 +7,12 @@ __maintainer__ = "Pawel Kowalik"
 __email__ = "pawel-kow@users.noreply.github.com"
 __status__ = "Beta"
 
-from unittest2 import TestCase
+from unittest2 import TestCase, skipIf
 from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException, \
     ConflictOnApplyException, NoDomainConnectRecordException
 # to assure input works like raw_input in python 2
 from builtins import input
+import os.environ
 
 oneandone_config = \
     dict(
@@ -168,7 +169,6 @@ class TestDomainConnect(TestCase):
             "Generated signature parameters differ"
 
 
-
     def test_get_domain_config(self):
         for i in configs:
             with self.subTest(i=i):
@@ -236,6 +236,7 @@ class TestDomainConnect(TestCase):
         except TemplateNotSupportedException:
             pass
 
+    @skipIf("CI" in os.environ)
     def test_get_domain_connect_async_open_browser(self):
         for i in configs:
             with self.subTest(i=i):
@@ -264,6 +265,7 @@ class TestDomainConnect(TestCase):
 
         dc.apply_domain_connect_template_async(context, params=params)
 
+    @skipIf("CI" in os.environ)
     def test_get_domain_connect_async_token_refresh(self):
         dc = DomainConnect()
         for i in configs:
@@ -300,6 +302,7 @@ class TestDomainConnect(TestCase):
         ctx = dc.get_async_token(ctx, credentials)
         assert (initial_token != ctx.access_token), "Token not refreshed when expired"
 
+    @skipIf("CI" in os.environ)
     def test_get_domain_connect_async_conflict(self):
         for i in configs:
             with self.subTest(i=i):
