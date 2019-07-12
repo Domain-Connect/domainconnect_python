@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Domain-Connect/domainconnect_python.svg?branch=master)](https://travis-ci.com/Domain-Connect/domainconnect_python)
+
 # domain-connect
 Python client library for Domain Connect protocol.
 For details of the protocol, please visit: https://domainconnect.org
