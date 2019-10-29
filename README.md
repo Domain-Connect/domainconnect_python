@@ -145,5 +145,6 @@ dc = DomainConnect(
 ## CHANGELOG
 | version | date       | changes |
 | ------- | -----------| ------ |
+| 0.0.7  | 2019-10-29 | Bugfix: error when setting up .app domain |
 | 0.0.6  | 2019-07-05 | UPDATE: moved from pycrypto to cryptography (due to know security issues) |
 | 0.0.5  | 2019-03-12 | NEW FEATURE: url signing capability added |

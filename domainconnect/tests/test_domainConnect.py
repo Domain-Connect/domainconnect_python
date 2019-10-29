@@ -185,6 +185,44 @@ class TestDomainConnect(TestCase):
         assert (res.urlAPI == config['API_URL']), 'urlAPI not correct: {}'.format(res.urlAPI)
         assert (res.providerName == config['PROVIDER_ID']), 'providerName not correct: {}'.format(res.providerName)
 
+    domainroottests = [
+        ('test.com', 'test.com', ''),
+        ('subdomain.test.com', 'test.com', 'subdomain'),
+        ('sub.subdomain.test.com', 'test.com', 'sub.subdomain'),
+        ('test.co.uk', 'test.co.uk', ''),
+        ('subdomain.test.co.uk', 'test.co.uk', 'subdomain'),
+        ('sub.subdomain.test.co.uk', 'test.co.uk', 'sub.subdomain'),
+        ('test.uk', 'test.uk', ''),
+        ('subdomain.test.uk', 'test.uk', 'subdomain'),
+        ('sub.subdomain.test.uk', 'test.uk', 'sub.subdomain'),
+        ('test.com.de', 'test.com.de', ''),
+        ('subdomain.test.com.de', 'test.com.de', 'subdomain'),
+        ('sub.subdomain.test.com.de', 'test.com.de', 'sub.subdomain'),
+        ('test.poznan.pl', 'test.poznan.pl', ''),
+        ('subdomain.test.poznan.pl', 'test.poznan.pl', 'subdomain'),
+        ('sub.subdomain.test.poznan.pl', 'test.poznan.pl', 'sub.subdomain'),
+        ('get.app', 'get.app', ''),
+        ('subdomain.get.app', 'get.app', 'subdomain'),
+        ('sub.subdomain.get.app', 'get.app', 'sub.subdomain'),
+        ('get.unkownnewtld', 'get.unkownnewtld', ''),
+        ('subdomain.get.unkownnewtld', 'get.unkownnewtld', 'subdomain'),
+        ('sub.subdomain.get.unkownnewtld', 'get.unkownnewtld', 'sub.subdomain'),
+    ]
+
+    def test_get_domain_root(self):
+        for i in TestDomainConnect.domainroottests:
+            with self.subTest(i=i):
+                self._test_get_domain_root(i)
+
+    @staticmethod
+    def _test_get_domain_root(config):
+        dc = DomainConnect()
+        domain_root = dc.identify_domain_root(config[0]);
+        assert domain_root is not None, "No domain root found"
+        assert domain_root == config[1], "Wrong domain root found. Expected {}, Found {}".format(config[1], domain_root)
+        assert '{}{}{}'.format(config[2], '' if config[2] == '' else '.', domain_root) == config[0], "Domain root + subdomain != domain"
+
+
     def test_get_domain_connect_template_async_url(self):
         for i in configs:
             with self.subTest(i=i):
