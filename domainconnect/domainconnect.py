@@ -13,7 +13,7 @@ import time
 from six.moves import urllib
 from dns.exception import Timeout
 from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
-from publicsuffix import PublicSuffixList
+from publicsuffixlist import PublicSuffixList
 import webbrowser
 from .network import get_json, get_http, http_request_json, NetworkContext
 
@@ -195,7 +195,7 @@ class DomainConnect:
 
     @staticmethod
     def identify_domain_root(domain):
-        return psl.get_public_suffix(domain)
+        return psl.privatesuffix(domain)
 
     def _identify_domain_connect_api(self, domain_root):
         # noinspection PyBroadException
