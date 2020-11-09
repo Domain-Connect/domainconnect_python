@@ -11,9 +11,9 @@ setup(name='domain_connect',
       author_email='pawel-kow@users.noreply.github.com',
       url='https://github.com/Domain-Connect/domainconnect_python',
       license='https://github.com/Domain-Connect/domainconnect_python/blob/master/LICENSE',
+      #python 3.5 failing in tests
       classifiers=[
           'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
