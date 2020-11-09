@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='domain_connect',
-      version='0.0.7',
+      version='0.0.8',
       description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       long_description_content_type="text/markdown",
       long_description=open('README.md').read(),
@@ -13,7 +13,11 @@ setup(name='domain_connect',
       license='https://github.com/Domain-Connect/domainconnect_python/blob/master/LICENSE',
       classifiers=[
           'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python :: 3.9',
       ],
       packages=[
           'domainconnect',
