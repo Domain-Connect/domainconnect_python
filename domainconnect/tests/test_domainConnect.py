@@ -9,7 +9,7 @@ __status__ = "Beta"
 
 from unittest2 import TestCase, skipIf
 from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException, \
-    ConflictOnApplyException, NoDomainConnectRecordException
+    ConflictOnApplyException, NoDomainConnectRecordException, AsyncTokenException
 # to assure input works like raw_input in python 2
 from builtins import input
 from os import environ
@@ -339,6 +339,18 @@ class TestDomainConnect(TestCase):
 
         ctx = dc.get_async_token(ctx, credentials)
         assert (initial_token != ctx.access_token), "Token not refreshed when expired"
+
+        # test handling on invalid refresh token
+        ctx.access_token_expires_in = 1
+        ctx.refresh_token = 'invalid'
+        try:
+            ctx = dc.get_async_token(ctx, credentials)
+            assert False, "Expected AsyncTokenException on invalid token refresh"
+        except AsyncTokenException as e:
+            # the second variant is for GoDaddy not compatible with OAuth specification
+            assert e.message.startswith("Failed to get async token") \
+                   or e.message.startswith("Cannot get async token: Invalid JSON returned (400): Provided token doesn't match the registered one"), \
+                "Unexpected error message on invalid refresh token: {}".format(e.message)
 
     @skipIf("CI" in environ, "Skipping integration test on CI")
     def test_get_domain_connect_async_conflict(self):
