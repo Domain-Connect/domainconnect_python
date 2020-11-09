@@ -12,6 +12,8 @@ import base64
 import json
 import re
 import ssl
+from json import JSONDecodeError
+
 from six.moves import http_client as client
 
 logging.basicConfig(format='%(asctime)s %(levelname)s [%(name)s] %(message)s', level=logging.WARN)
@@ -35,7 +37,10 @@ def http_request_json(*args, **kwargs):
     See: http_request
     """
     ret, status = http_request(*args, **kwargs)
-    return json.loads(ret), status
+    try:
+        return json.loads(ret), status
+    except JSONDecodeError as e:
+        raise JSONDecodeError("Invalid JSON returned ({}): {}".format(status, ret), e.doc, e.pos)
 
 
 def http_request(context, method, url, body=None, basic_auth=None, bearer=None, content_type=None,

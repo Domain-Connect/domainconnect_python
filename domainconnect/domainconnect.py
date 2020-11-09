@@ -33,6 +33,12 @@ psl = PublicSuffixList()
 class DomainConnectException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+        if "message" in kwargs:
+            self.message = kwargs["message"]
 
 
 class TemplateDoesNotExistException(DomainConnectException):
@@ -515,8 +521,17 @@ class DomainConnect:
                                                  'client_id': credentials.client_id,
                                                  'client_secret': credentials.client_secret,
                                              }),
-                                             url=url_get_access_token
+                                             url=url_get_access_token,
+                                             accepted_statuses=[200, 400]
                                              )
+            if status == 400:
+                raise AsyncTokenException(
+                    'Failed to get async token: {} {} {}'.format(
+                            status,
+                            data["error"],
+                            data["error_description"] if "error_description" in data else ""))
+        except AsyncTokenException:
+            raise
         except Exception as ex:
             logger.debug('Cannot get async token: {}'.format(ex))
             raise AsyncTokenException('Cannot get async token: {}'.format(ex))
