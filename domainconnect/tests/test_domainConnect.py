@@ -307,7 +307,7 @@ class TestDomainConnect(TestCase):
         ctx.refresh_token = 'invalid'
         try:
             ctx = dc.get_async_token(ctx, credentials)
-            assert (False, "Expected AsyncTokenException on invalid token refresh")
+            assert False, "Expected AsyncTokenException on invalid token refresh"
         except AsyncTokenException as e:
             # the second variant is for GoDaddy not compatible with OAuth specification
             assert e.message.startswith("Failed to get async token") \

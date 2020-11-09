@@ -12,10 +12,6 @@ import base64
 import json
 import re
 import ssl
-try:
-    from json import JSONDecodeError
-except ImportError:
-    from json.decoder import JSONDecodeError
 
 from six.moves import http_client as client
 
@@ -42,8 +38,8 @@ def http_request_json(*args, **kwargs):
     ret, status = http_request(*args, **kwargs)
     try:
         return json.loads(ret), status
-    except JSONDecodeError as e:
-        raise JSONDecodeError("Invalid JSON returned ({}): {}".format(status, ret), e.doc, e.pos)
+    except ValueError as e:
+        raise ValueError("Invalid JSON returned ({}): {}".format(status, ret))
 
 
 def http_request(context, method, url, body=None, basic_auth=None, bearer=None, content_type=None,
