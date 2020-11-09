@@ -12,7 +12,10 @@ import base64
 import json
 import re
 import ssl
-from json import JSONDecodeError
+try:
+    from json import JSONDecodeError
+except ImportError:
+    from json.decoder import JSONDecodeError
 
 from six.moves import http_client as client
 
