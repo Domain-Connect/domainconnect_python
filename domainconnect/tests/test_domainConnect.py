@@ -27,7 +27,7 @@ oneandone_config = \
 godaddy_config = \
     dict(
         PROVIDER_ID='GoDaddy',
-        TEST_DOMAIN='weathernyc.nyc',
+        TEST_DOMAIN='ourtransfertestingwithgd2.com',
         SYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_SERVICE_IN_PATH=True,
@@ -54,10 +54,11 @@ class TestDomainConnect(TestCase):
         dc = DomainConnect()
 
         try:
-            res = dc.get_domain_connect_template_sync_url('sfisdofjsoidhfiosdhif.bike', "exampleservice.domainconnect.org",
-                                                      "template1",
-                                                      params={"IP": "132.148.25.185",
-                                                              "RANDOMTEXT": "shm:1531371203:Hejo"})
+            res = dc.get_domain_connect_template_sync_url('sfisdofjsoidhfiosdhif.bike',
+                                                          "exampleservice.domainconnect.org",
+                                                          "template1",
+                                                          params={"IP": "132.148.25.185",
+                                                                  "RANDOMTEXT": "shm:1531371203:Hejo"})
             assert False, "Got URL, where not possible: {}".format(res)
         except NoDomainConnectRecordException:
             pass
@@ -83,8 +84,6 @@ class TestDomainConnect(TestCase):
                   '?IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo&domain='
                 + config['TEST_DOMAIN']), \
             "1. URL is different than expected: {}".format(res)
-
-
 
         # simple test sync with host
         res = dc.get_domain_connect_template_sync_url("justatest." + config['TEST_DOMAIN'],
@@ -165,9 +164,9 @@ class TestDomainConnect(TestCase):
 
         sigparams = DomainConnect._generate_sig_params(querystring, priv_key, '_dck1')
 
-        assert (sigparams == '&sig=pDgKCqDX%2BYafD8fqchYjayZt6bgf5ncz%2FJlYVGV0SbZrcUPb5tgMyqpn4g%2BlY%2FigpgKYFhkXGcAeNOrQ0aiTu31bLo7ODkK2fWsdz4G%2BpSa5Lkb7NhwS07o6cpQMcvO8aihA7pU5%2BIbPd3Im1ncUNol3zfjeyAl%2BaBkfcXOAl2xnWY8NobMzaI0jqVwPnWperRj5VGfX6vu5mPviDFzcS0RvruRAHv08X8zDp%2BBvCnpk4L1cWn49%2FZceS8Hifo7%2FkVd4j%2BdFGvze7H4cGZ2Kx6ZrSShW3a7AwvV6cVGxqn%2FdQlpYYsHBHlv9Zbhe2pKuqpAhB%2FxDN2G%2FjQaDqmcWGw%3D%3D&key=_dck1'), \
+        assert (
+                    sigparams == '&sig=pDgKCqDX%2BYafD8fqchYjayZt6bgf5ncz%2FJlYVGV0SbZrcUPb5tgMyqpn4g%2BlY%2FigpgKYFhkXGcAeNOrQ0aiTu31bLo7ODkK2fWsdz4G%2BpSa5Lkb7NhwS07o6cpQMcvO8aihA7pU5%2BIbPd3Im1ncUNol3zfjeyAl%2BaBkfcXOAl2xnWY8NobMzaI0jqVwPnWperRj5VGfX6vu5mPviDFzcS0RvruRAHv08X8zDp%2BBvCnpk4L1cWn49%2FZceS8Hifo7%2FkVd4j%2BdFGvze7H4cGZ2Kx6ZrSShW3a7AwvV6cVGxqn%2FdQlpYYsHBHlv9Zbhe2pKuqpAhB%2FxDN2G%2FjQaDqmcWGw%3D%3D&key=_dck1'), \
             "Generated signature parameters differ"
-
 
     def test_get_domain_config(self):
         for i in configs:
@@ -217,11 +216,11 @@ class TestDomainConnect(TestCase):
     @staticmethod
     def _test_get_domain_root(config):
         dc = DomainConnect()
-        domain_root = dc.identify_domain_root(config[0]);
+        domain_root = dc.identify_domain_root(config[0])
         assert domain_root is not None, "No domain root found"
         assert domain_root == config[1], "Wrong domain root found. Expected {}, Found {}".format(config[1], domain_root)
-        assert '{}{}{}'.format(config[2], '' if config[2] == '' else '.', domain_root) == config[0], "Domain root + subdomain != domain"
-
+        assert '{}{}{}'.format(config[2], '' if config[2] == '' else '.', domain_root) == config[
+            0], "Domain root + subdomain != domain"
 
     def test_get_domain_connect_template_async_url(self):
         for i in configs:
@@ -328,8 +327,8 @@ class TestDomainConnect(TestCase):
 
         # for DYNDNS there are static credentials
         credentials = DomainConnectAsyncCredentials(client_id='domainconnect.org',
-                                           client_secret='inconceivable',
-                                           api_url=context.config.urlAPI)
+                                                    client_secret='inconceivable',
+                                                    api_url=context.config.urlAPI)
         ctx = dc.get_async_token(context, credentials)
         initial_token = ctx.access_token
         assert (ctx.access_token_expires_in is not None), 'Access token expiration data missing'
@@ -349,7 +348,8 @@ class TestDomainConnect(TestCase):
         except AsyncTokenException as e:
             # the second variant is for GoDaddy not compatible with OAuth specification
             assert e.message.startswith("Failed to get async token") \
-                   or e.message.startswith("Cannot get async token: Invalid JSON returned (400): Provided token doesn't match the registered one"), \
+                   or e.message.startswith(
+                "Cannot get async token: Invalid JSON returned (400): Provided token doesn't match the registered one"), \
                 "Unexpected error message on invalid refresh token: {}".format(e.message)
 
     @skipIf("CI" in environ, "Skipping integration test on CI")
