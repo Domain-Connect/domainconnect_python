@@ -10,11 +10,16 @@ __status__ = "Beta"
 import logging
 import json
 import time
+
 from six.moves import urllib
 from dns.exception import Timeout
 from dns.resolver import Resolver, NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 from publicsuffixlist import PublicSuffixList
-import webbrowser
+try:
+    import webbrowser
+except ModuleNotFoundError:
+    pass
+import sys
 from .network import get_json, get_http, http_request_json, NetworkContext
 
 from cryptography.hazmat.primitives import hashes
@@ -478,12 +483,13 @@ class DomainConnect:
         async_context = self.get_domain_connect_template_async_context(
             domain, provider_id, service_id, redirect_uri, params, state, service_id_in_path)
 
-        try:
-            print('Please open URL: {}'.format(async_context.asyncConsentUrl))
-            webbrowser.open_new_tab(async_context.asyncConsentUrl)
-            return async_context
-        except webbrowser.Error as err:
-            raise Exception("Error opening browser window: {}".format(err))
+        print('Please open URL: {}'.format(async_context.asyncConsentUrl))
+        if "webbrowser" in sys.modules:
+            try:
+                webbrowser.open_new_tab(async_context.asyncConsentUrl)
+            except webbrowser.Error as err:
+                raise Exception("Error opening browser window: {}".format(err))
+        return async_context
 
     def get_async_token(self, context, credentials):
         """Gets access_token in async process
