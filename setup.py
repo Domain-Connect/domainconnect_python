@@ -7,7 +7,7 @@ test_deps = [
 ]
 
 setup(name='domain_connect',
-      version='0.0.9',
+      version='0.0.10',
       description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       long_description_content_type="text/markdown",
       long_description=open('README.md').read(),
@@ -29,10 +29,10 @@ setup(name='domain_connect',
       install_requires=[
           'dnspython >= 1.16.0',
           'publicsuffix >= 1.1.0',
-          'publicsuffixlist >= 0.6.11',
+          'publicsuffixlist >= 0.7.7',
           'six >= 1.12.0',
           'future >= 0.18.1',
-          'cryptography >= 3.2'
+          'cryptography >= 3.3.2'
       ],
       tests_require=test_deps,
       extras_require={
