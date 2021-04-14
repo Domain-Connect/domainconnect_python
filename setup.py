@@ -7,7 +7,7 @@ test_deps = [
 ]
 
 setup(name='domain_connect',
-      version='0.0.10',
+      version='0.0.9',
       description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       long_description_content_type="text/markdown",
       long_description=open('README.md').read(),
