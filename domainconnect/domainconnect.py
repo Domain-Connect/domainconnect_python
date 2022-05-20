@@ -199,6 +199,14 @@ class DomainConnect:
     _networkContext = NetworkContext()
     _resolver = Resolver()
 
+    # add some public resolvers in case the host nameserver would resolve to a local IP
+    # 1.1.1.1 Cloudflare
+    # 8.8.8.8 is Google's public DNS server
+    # 9.9.9.9 Quad9
+    # 156.154.70.1 Neustar
+    # 176.103.130.130 AdGuard public DNS server
+    _resolver.nameservers = ['1.1.1.1', '8.8.8.8', '9.9.9.9', '156.154.70.1', '176.103.130.130']
+
     def __init__(self, networkcontext=NetworkContext()):
         self._networkContext = networkcontext
         if networkcontext.nameservers is not None:
