@@ -1,5 +1,5 @@
 cffi==1.14.5
-cryptography==3.3.2
+cryptography==39.0.1
 dnspython==1.16.0
 enum34==1.1.10
 future==0.18.2
