@@ -7,7 +7,7 @@ test_deps = [
 ]
 
 setup(name='domain_connect',
-      version='0.0.9',
+      version='0.0.10',
       description='Python client library for Domain Connect protocol. See: https://domainconnect.org',
       long_description_content_type="text/markdown",
       long_description=open('README.md').read(),
@@ -15,7 +15,6 @@ setup(name='domain_connect',
       author_email='pawel-kow@users.noreply.github.com',
       url='https://github.com/Domain-Connect/domainconnect_python',
       license='https://github.com/Domain-Connect/domainconnect_python/blob/master/LICENSE',
-      # python 3.5 failing in tests
       classifiers=[
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.6',
@@ -35,7 +34,8 @@ setup(name='domain_connect',
           'publicsuffixlist >= 0.7.7',
           'six >= 1.12.0',
           'future >= 0.18.1',
-          'cryptography >= 3.3.2'
+          'cryptography==3.3.2; python_version == "2.7"',
+          'cryptography==39.0.1; python_version > "2.7"'
       ],
       tests_require=test_deps,
       extras_require={
