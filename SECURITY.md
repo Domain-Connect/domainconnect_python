@@ -2,8 +2,7 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+These versions of the project and python versions are currently being supported with security updates.
 
 |Python Version| Version | Supported          |
 | ------- | ------- | ------------------ |
