@@ -7,7 +7,15 @@ __maintainer__ = "Pawel Kowalik"
 __email__ = "pawel-kow@users.noreply.github.com"
 __status__ = "Beta"
 
-from unittest2 import TestCase, skipIf
+import sys
+
+if sys.version_info[0] == 2 and sys.version_info[1] == 7:
+    # Python 2.7
+    from unittest2 import TestCase, skipIf
+else:
+    # Python 3.x
+    from unittest import TestCase, skipIf
+
 from domainconnect import DomainConnect, DomainConnectAsyncCredentials, TemplateNotSupportedException, \
     ConflictOnApplyException, NoDomainConnectRecordException, AsyncTokenException
 # to assure input works like raw_input in python 2
@@ -16,18 +24,18 @@ from os import environ
 
 oneandone_config = \
     dict(
-        PROVIDER_ID='1and1',
-        TEST_DOMAIN='connect.domains',
-        SYNC_URL='https://domainconnect.1and1.com/sync',
-        ASYNC_URL='https://domainconnect.1and1.com/async',
+        PROVIDER_ID='IONOS',
+        TEST_DOMAIN='diabtrack.com',
+        SYNC_URL='https://domainconnect.ionos.de/sync',
+        ASYNC_URL='https://domainconnect.ionos.de/async',
         ASYNC_SERVICE_IN_PATH=False,
-        API_URL='https://api.domainconnect.1and1.com'
+        API_URL='https://api.domainconnect.ionos.com'
     )
 
 godaddy_config = \
     dict(
         PROVIDER_ID='GoDaddy',
-        TEST_DOMAIN='ourtransfertestingwithgd2.com',
+        TEST_DOMAIN='domainconnectdnsdemo.net',
         SYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_URL='https://dcc.godaddy.com/manage',
         ASYNC_SERVICE_IN_PATH=True,
@@ -35,7 +43,7 @@ godaddy_config = \
     )
 
 test_credentials = {
-    "1and1": DomainConnectAsyncCredentials(client_id='exampleservice.domainconnect.org',
+    "IONOS": DomainConnectAsyncCredentials(client_id='exampleservice.domainconnect.org',
                                            client_secret='cd$;CVZRj#B8C@o3o8E4v-*k2H7S%)',
                                            api_url=oneandone_config['API_URL']),
     "GoDaddy": DomainConnectAsyncCredentials(client_id='exampleservice.domainconnect.org',
@@ -155,7 +163,7 @@ class TestDomainConnect(TestCase):
                 + '/v2/domainTemplates/providers/exampleservice.domainconnect.org/services/template2/apply'
                   '?IP=132.148.25.185&RANDOMTEXT=shm%3A1531371203%3AHejo&domain='
                 + config['TEST_DOMAIN']
-                + '&sig=E8lWecXOM7s4SwLp6bNhivmvqV47wynek6rO13iUIbC095p9WR5VnCY%2Fg8aUhazmM3squI0lr1wz5REiUIHVX5AP3reFbU6bLIzckgWoN9%2F3VgxtS9q%2FEgO8HL9%2FbTGjUodf9eI7afWXR348C8ekQFZeT%2F7SHMn7VvM%2BEpLA7ZDIq4kROJXE2eIOI21j6nkE4luWn2vWYdK%2BvUnp4YTzot03uj6cQ5nkpEziCJK5hqMqhZP5%2F755RLI3bH%2BpMvegFE2ualUM6BsvNJ4kyYNf250NyafLZU1RbkeUD1SM4KaUU59IY1PEKI44I21%2BfCPN8kAMFmTJqpNHLNffixNlgA%3D%3D&key=_dck1'), \
+                + '&sig=IBLe5MctX7VUYYyPqhNAKWZaY8iobj9zIXIioPKVvpH8BulUxwP%2Fmdw1yWDyiv9ZYQRLkFnZNAZZ29ePcUKYWDqPo0YoHXl%2F%2FQwwCl0OqFFZyhatIbZb074QtX7np7Aji8VIN2jHElOY%2B8kVjWXk0YZpXWHuR80MlBKkUtaHKSs6gu3RAdhaT33kMANf3gHKhPka7401cZZcWAF5X1wbMKPNgjdyzVJmcv6NPBxpwGfEKbyf%2FUQ1UXkiVOWw709eILTIcFICG%2FbCYZGOQp%2BK53tGGZvSmlkGhHLxwQdP9R%2B56cjmgrIWdxOvrB%2FYKaFdhUABuv1dnPicuv31tTcKYQ%3D%3D&key=_dck1'), \
             "URL is different than expected: {}".format(res)
 
     def test_generate_sig_params(self):
