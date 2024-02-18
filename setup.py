@@ -34,8 +34,10 @@ setup(name='domain_connect',
           'publicsuffixlist >= 0.7.7',
           'six >= 1.12.0',
           'future >= 0.18.3',
-          'cryptography==3.3.2; python_version == "2.7"',
-          'cryptography==39.0.1; python_version > "2.7"'
+          'cryptography>=3.3.2; python_version == "2.7"',
+          'cryptography>=39.0.1; python_version > "2.7"',
+          'cryptography>=40.0.2; python_version >= "3.6"',
+          'cryptography>=42.0.0; python_version > "3.7"',
       ],
       tests_require=test_deps,
       extras_require={
