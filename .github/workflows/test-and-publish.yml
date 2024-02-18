@@ -16,20 +16,20 @@ jobs:
         include:
           - python-version: 2.7
             os: ubuntu-20.04
-#          - python-version: 3.6
-#            os: ubuntu-20.04
-#          - python-version: 3.7
-#            os: ubuntu-22.04
-#          - python-version: 3.8
-#            os: ubuntu-22.04
-#          - python-version: 3.9
-#            os: ubuntu-22.04
-#          - python-version: "3.10"
-#            os: ubuntu-22.04
-#          - python-version: "3.11"
-#            os: ubuntu-22.04
-#          - python-version: "3.12"
-#            os: ubuntu-22.04
+          - python-version: 3.6
+            os: ubuntu-20.04
+          - python-version: 3.7
+            os: ubuntu-22.04
+          - python-version: 3.8
+            os: ubuntu-22.04
+          - python-version: 3.9
+            os: ubuntu-22.04
+          - python-version: "3.10"
+            os: ubuntu-22.04
+          - python-version: "3.11"
+            os: ubuntu-22.04
+          - python-version: "3.12"
+            os: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v4
@@ -43,10 +43,8 @@ jobs:
       if: ${{ matrix.python-version == '2.7' }}
       run: | 
         sudo ln -sf /usr/bin/python2.7 /usr/bin/python
-        sudo apt install curl
         curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
         sudo python get-pip.py
-        which pip2
 
     - name: Install dependencies
       run: |
