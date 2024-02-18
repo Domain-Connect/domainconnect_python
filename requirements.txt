@@ -3,7 +3,7 @@ cryptography==3.3.2; python_version == '2.7'
 cryptography==39.0.1; python_version > '2.7'
 dnspython==1.16.0
 enum34==1.1.10
-future==0.18.2
+future==0.18.3
 ipaddress==1.0.23
 publicsuffix==1.1.1
 publicsuffixlist==0.7.7

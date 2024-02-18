@@ -33,7 +33,7 @@ setup(name='domain_connect',
           'publicsuffix >= 1.1.0',
           'publicsuffixlist >= 0.7.7',
           'six >= 1.12.0',
-          'future >= 0.18.1',
+          'future >= 0.18.3',
           'cryptography==3.3.2; python_version == "2.7"',
           'cryptography==39.0.1; python_version > "2.7"'
       ],
